@@ -58,6 +58,11 @@ function main() {
         });
 
         signaling_socket.on("whiteboardInfoUpdate", (info) => {
+            if (info.isReadOnly) {
+                ReadOnlyService.activateReadOnlyMode();
+            } else {
+                ReadOnlyService.deactivateReadOnlyMode();
+            }
             InfoService.updateInfoFromServer(info);
             whiteboard.updateSmallestScreenResolution();
         });
@@ -180,6 +185,21 @@ function initWhiteboard() {
             });
         });
 
+        // view only
+        $("#whiteboardLockBtn")
+            .off("click")
+            .click(() => {
+                signaling_socket.emit("setReadOnly", { isReadOnly: false });
+                //ReadOnlyService.deactivateReadOnlyMode();
+            });
+
+        $("#whiteboardUnlockBtn")
+            .off("click")
+            .click(() => {
+                signaling_socket.emit("setReadOnly", { isReadOnly: true });
+                //ReadOnlyService.activateReadOnlyMode();
+            });
+
         /*----------------/
         Whiteboard actions
         /----------------*/
@@ -276,19 +296,13 @@ function initWhiteboard() {
                 whiteboard.redoWhiteboardClick();
             });
 
-        // view only
-        $("#whiteboardLockBtn")
-            .off("click")
-            .click(() => {
-                ReadOnlyService.deactivateReadOnlyMode();
-            });
-        $("#whiteboardUnlockBtn")
-            .off("click")
-            .click(() => {
-                ReadOnlyService.activateReadOnlyMode();
-            });
-        $("#whiteboardUnlockBtn").hide();
-        $("#whiteboardLockBtn").show();
+        if (ConfigService.isAdmin) {
+            $("#whiteboardUnlockBtn").hide();
+            $("#whiteboardLockBtn").show();
+        } else {
+            $("#whiteboardUnlockBtn").remove();
+            $("#whiteboardLockBtn").remove();
+        }
 
         // switch tool
         $(".whiteboard-tool")

@@ -219,6 +219,7 @@ function startBackendServer(port) {
                             whiteboardId
                         ),
                         isReadOnly: ReadOnlyBackendService.isReadOnly(whiteboardId),
+                        isAdmin: true,
                     },
                 });
 
@@ -239,6 +240,14 @@ function startBackendServer(port) {
                     whiteboardId,
                     screenResolution
                 );
+            }
+        });
+
+        socket.on("setReadOnly", function (content) {
+            content = escapeAllContentStrings(content);
+            if (accessToken === "" || accessToken == content["at"]) {
+                const isReadOnly = content["isReadOnly"];
+                WhiteboardInfoBackendService.setReadOnly(whiteboardId, isReadOnly);
             }
         });
     });

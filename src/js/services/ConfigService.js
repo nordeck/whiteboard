@@ -30,6 +30,14 @@ class ConfigService {
     }
 
     /**
+     * @type {boolean}
+     */
+    #isAdmin = true;
+    get isAdmin() {
+        return this.#isAdmin;
+    }
+
+    /**
      * @type {{displayInfo: boolean, setReadOnly: boolean}}
      * @readonly
      */
@@ -115,10 +123,11 @@ class ConfigService {
         this.#refreshInfoInterval = 1000 / performance.refreshInfoFreq;
 
         const { whiteboardSpecific } = configFromServer;
-        const { correspondingReadOnlyWid, isReadOnly } = whiteboardSpecific;
+        const { correspondingReadOnlyWid, isReadOnly, isAdmin } = whiteboardSpecific;
 
         this.#correspondingReadOnlyWid = correspondingReadOnlyWid;
         this.#isReadOnly = isReadOnly;
+        this.#isAdmin = isAdmin;
 
         console.log("Whiteboard config from server:", configFromServer, "parsed:", this);
     }

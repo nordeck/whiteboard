@@ -47,6 +47,14 @@ class InfoService {
     }
 
     /**
+     * @type {boolean}
+     */
+    #isReadOnly = false;
+    get isReadOnly() {
+        return this.#isReadOnly;
+    }
+
+    /**
      * Holds the interval Id
      * @type {number}
      */
@@ -59,11 +67,12 @@ class InfoService {
      * @param {number} nbConnectedUsers
      * @param {{w: number, h: number}} smallestScreenResolution
      */
-    updateInfoFromServer({ nbConnectedUsers, smallestScreenResolution = undefined }) {
+    updateInfoFromServer({ nbConnectedUsers, smallestScreenResolution = undefined, isReadOnly }) {
         if (this.#nbConnectedUsers !== nbConnectedUsers) {
             // Refresh config service parameters on nb connected user change
             ConfigService.refreshUserCountDependant(nbConnectedUsers);
         }
+        this.#isReadOnly = isReadOnly;
         this.#nbConnectedUsers = nbConnectedUsers;
         if (smallestScreenResolution) {
             this.#smallestScreenResolution = smallestScreenResolution;
@@ -83,8 +92,10 @@ class InfoService {
             nbMessagesReceived,
             nbMessagesSent,
             nbConnectedUsers,
+            isReadOnly,
             smallestScreenResolution: ssr,
         } = this;
+        $("#isReadOnly")[0].innerText = String(isReadOnly);
         $("#messageReceivedCount")[0].innerText = String(nbMessagesReceived);
         $("#messageSentCount")[0].innerText = String(nbMessagesSent);
         $("#connectedUsersCount")[0].innerText = String(nbConnectedUsers);

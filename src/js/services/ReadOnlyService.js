@@ -44,8 +44,7 @@ class ReadOnlyService {
     deactivateReadOnlyMode() {
         if (ConfigService.isReadOnly) return;
 
-        this.#readOnlyActive = false;
-
+        //this.#readOnlyActive = false;
         $(".whiteboard-tool").prop("disabled", false);
         $(".whiteboard-edit-group > button").prop("disabled", false);
         $(".whiteboard-edit-group").removeClass("group-disabled");
