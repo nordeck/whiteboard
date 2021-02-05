@@ -1,35 +1,35 @@
 import { IOpenIDCredentials, WidgetApi } from "matrix-widget-api";
 import * as qs from "querystring";
 
-WidgetContextProps = {
+let WidgetContextProps = {
     /**
      * The instance of the widget API.
      */
-    widgetApi,
+    widgetApi: {},
     /**
      * The ID of the widget.
      */
-    widgetId,
+    widgetId: "",
     /**
      * The room of the widget.
      */
-    roomId,
+    roomId: "",
     /**
      * The creator of the widget.
      */
-    creator,
+    creator: "",
     /**
      * The origin of the matrix client.
      */
-    parentOrigin,
+    parentOrigin: "",
     /**
      * Indicates if the widget API is initializing.
      */
-    isInitializing,
+    isInitializing: true,
     /**
      * Indicates if the widget API is ready to be used.
      */
-    isReady,
+    isReady: false,
     /**
      * Gets the current OpenID Connect token that can be used server side with the Federation API.
      */
@@ -37,26 +37,27 @@ WidgetContextProps = {
 };
 
 function widgetProviderService() {
-    widgetQuery = qs.parse(window.location.hash.substring(1));
-    query = Object.assign({}, qs.parse(window.location.search.substring(1)), widgetQuery);
-    qsParam = (name) => {
+    const widgetQuery = qs.parse(window.location.hash.substring(1));
+    const query = Object.assign({}, qs.parse(window.location.search.substring(1)), widgetQuery);
+    const qsParam = (name) => {
         return query[name];
     };
 
-    parentUrl = qsParam("parentUrl");
-    parentOrigin = parentUrl && new URL(parentUrl).origin;
-    widgetId = qsParam("widgetId");
-    widgetApi = new WidgetApi(widgetId, parentOrigin);
+    const parentUrl = qsParam("parentUrl");
+    const parentOrigin = parentUrl && new URL(parentUrl).origin;
+    const widgetId = qsParam("widgetId");
+    const widgetApi = new WidgetApi(widgetId, parentOrigin);
 
-    mainWidgetId = widgetId && decodeURIComponent(widgetId).replace(/^modal_/, "");
-    roomId = mainWidgetId && mainWidgetId.indexOf("_") ? mainWidgetId.split("_")[0] : undefined;
-    creator =
+    const mainWidgetId = widgetId && decodeURIComponent(widgetId).replace(/^modal_/, "");
+    const roomId =
+        mainWidgetId && mainWidgetId.indexOf("_") ? mainWidgetId.split("_")[0] : undefined;
+    const creator =
         mainWidgetId && (mainWidgetId.match(/_/g) || []).length > 1
             ? mainWidgetId.split("_")[1]
             : undefined;
 
-    openIdToken = undefined;
-    getOpenIdToken = async () => {
+    const openIdToken = undefined;
+    const getOpenIdToken = async () => {
         widgetApi.on("ready", onReady);
         try {
             const timeoutDate = new Date();
@@ -67,11 +68,11 @@ function widgetProviderService() {
                 token.expirationDate.setSeconds(
                     token.expirationDate.getSeconds() + (token.expires_in || 0)
                 );
-                openIdToken = token;
+                let openIdToken = token;
             }
         } catch (err) {
             console.warn("Unable to retrieve OpenId Connect token from Matrix Widget API.", err);
-            openIdToken = undefined;
+            let openIdToken = undefined;
         }
         return openIdToken;
     };
