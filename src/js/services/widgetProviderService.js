@@ -1,5 +1,5 @@
-/* import { IOpenIDCredentials, WidgetApi } from 'matrix-widget-api';
-import * as qs from 'querystring'; */
+import { IOpenIDCredentials, WidgetApi } from "matrix-widget-api";
+import * as qs from "querystring";
 
 WidgetContextProps = {
     /**
@@ -36,62 +36,63 @@ WidgetContextProps = {
     //getOpenIdToken: () => Promise<IOpenIDCredentials>;
 };
 
-/*
 function widgetProviderService() {
-
-
     widgetQuery = qs.parse(window.location.hash.substring(1));
     query = Object.assign({}, qs.parse(window.location.search.substring(1)), widgetQuery);
-    qsParam = (name)=> {
-         return query[name]};
-
-    parentUrl = qsParam('parentUrl');
-    parentOrigin = parentUrl && new URL(parentUrl).origin;
-    widgetId = qsParam('widgetId');
-    widgetApi = new WidgetApi(widgetId, parentOrigin);
-
-    mainWidgetId = widgetId && decodeURIComponent(widgetId).replace(/^modal_/, '');
-    roomId = mainWidgetId && mainWidgetId.indexOf('_') ? mainWidgetId.split('_')[0] : undefined;
-    creator = mainWidgetId && (mainWidgetId.match(/_/g) || []).length > 1 ? mainWidgetId.split('_')[1] : undefined;
-
-   openIdToken = undefined;
-     getOpenIdToken = async () => {
-  widgetApi.on('ready', onReady);
-  try {
-    const timeoutDate = new Date();
-    timeoutDate.setSeconds(timeoutDate.getSeconds() - 30);
-    if (!IOpenIDCredentials || IOpenIDCredentials.expirationDate < timeoutDate) {
-      const token = await widgetApi.requestOpenIDConnectToken();
-      token.expirationDate = new Date();
-      token.expirationDate.setSeconds(token.expirationDate.getSeconds() + (token.expires_in || 0));
-      openIdToken = token;
-    }
-  } catch (err) {
-    console.warn('Unable to retrieve OpenId Connect token from Matrix Widget API.', err);
-    openIdToken = undefined;
-  }
-  return openIdToken;
+    qsParam = (name) => {
+        return query[name];
     };
 
-    function onReady(){
-        console.log('READY');
+    parentUrl = qsParam("parentUrl");
+    parentOrigin = parentUrl && new URL(parentUrl).origin;
+    widgetId = qsParam("widgetId");
+    widgetApi = new WidgetApi(widgetId, parentOrigin);
+
+    mainWidgetId = widgetId && decodeURIComponent(widgetId).replace(/^modal_/, "");
+    roomId = mainWidgetId && mainWidgetId.indexOf("_") ? mainWidgetId.split("_")[0] : undefined;
+    creator =
+        mainWidgetId && (mainWidgetId.match(/_/g) || []).length > 1
+            ? mainWidgetId.split("_")[1]
+            : undefined;
+
+    openIdToken = undefined;
+    getOpenIdToken = async () => {
+        widgetApi.on("ready", onReady);
+        try {
+            const timeoutDate = new Date();
+            timeoutDate.setSeconds(timeoutDate.getSeconds() - 30);
+            if (!IOpenIDCredentials || IOpenIDCredentials.expirationDate < timeoutDate) {
+                const token = await widgetApi.requestOpenIDConnectToken();
+                token.expirationDate = new Date();
+                token.expirationDate.setSeconds(
+                    token.expirationDate.getSeconds() + (token.expires_in || 0)
+                );
+                openIdToken = token;
+            }
+        } catch (err) {
+            console.warn("Unable to retrieve OpenId Connect token from Matrix Widget API.", err);
+            openIdToken = undefined;
+        }
+        return openIdToken;
+    };
+
+    function onReady() {
+        console.log("READY");
         WidgetContextProps.isInitializing = false;
         WidgetContextProps.isReady = true;
     }
 
-    widgetApi.on('ready', onReady);
+    widgetApi.on("ready", onReady);
 
     if (widgetId) {
         WidgetContextProps.isInitializing = true;
         try {
-          widgetApi.start();
+            widgetApi.start();
         } catch (err) {
-          console.error('Unable to initialize Matrix Widget API', err);
+            console.error("Unable to initialize Matrix Widget API", err);
         }
     } else {
-        console.info('Widget is used outside of Matrix. Matrix Widget API is not available.');
+        console.info("Widget is used outside of Matrix. Matrix Widget API is not available.");
         WidgetContextProps.isInitializing = false;
-        }
+    }
 }
-
- */
