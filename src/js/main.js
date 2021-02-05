@@ -158,7 +158,7 @@ function initWhiteboard() {
             //Load the whiteboard
             whiteboardId: whiteboardId,
             username: btoa(myUsername),
-            backgroundGridUrl: "./images/" + ConfigService.backgroundGridImage,
+            //backgroundGridUrl: "./images/" + ConfigService.backgroundGridImage,
             sendFunction: function (content) {
                 if (ReadOnlyService.readOnlyActive) return;
                 //ADD IN LATER THROUGH CONFIG
@@ -480,6 +480,10 @@ function initWhiteboard() {
                 $("#myFile").click();
             });
 
+        if (!ConfigService.isAdmin) {
+            $("#shareWhiteboardBtn").remove();
+        }
+
         $("#shareWhiteboardBtn")
             .off("click")
             .click(() => {
@@ -533,7 +537,7 @@ function initWhiteboard() {
                     .click(() => {
                         $("#shareWhiteboardDialogMessage")
                             .toggleClass("displayNone", false)
-                            .text("Read/write link copied to clipboard ✓");
+                            .text("link copied to clipboard ✓");
                         urlToClipboard();
                     });
             });
@@ -543,6 +547,20 @@ function initWhiteboard() {
             .click(() => {
                 InfoService.toggleDisplayInfo();
             });
+
+        // disabled Buttons for not Admin
+        if (!ConfigService.isAdmin && InfoService.isReadOnly) {
+            $(".whiteboard-tool[tool=mouse]").click();
+            $(".whiteboard-tool").prop("disabled", true);
+            $(".whiteboard-edit-group > button").prop("disabled", true);
+            $(".whiteboard-edit-group").addClass("group-disabled");
+            $("#saveAsImageBtn").addClass("displayNone");
+        } else {
+            $(".whiteboard-tool").prop("disabled", false);
+            $(".whiteboard-edit-group > button").prop("disabled", false);
+            $(".whiteboard-edit-group").removeClass("group-disabled");
+            $("#saveAsImageBtn").removeClass("displayNone");
+        }
 
         var btnsMini = false;
         $("#minMaxBtn")

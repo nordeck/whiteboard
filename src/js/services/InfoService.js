@@ -49,7 +49,7 @@ class InfoService {
     /**
      * @type {boolean}
      */
-    #isReadOnly = false;
+    #isReadOnly = true;
     get isReadOnly() {
         return this.#isReadOnly;
     }

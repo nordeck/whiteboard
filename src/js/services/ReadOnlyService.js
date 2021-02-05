@@ -24,36 +24,43 @@ class ReadOnlyService {
      * Activate read-only mode
      */
     activateReadOnlyMode() {
-        this.#readOnlyActive = true;
+        if (ConfigService.isAdmin) {
+            this.#readOnlyActive = false;
+        } else {
+            return;
+        }
 
+        $("#whiteboardUnlockBtn").hide();
+        $("#whiteboardLockBtn").show();
         this.#previousToolHtmlElem = $(".whiteboard-tool.active");
 
         // switch to mouse tool to prevent the use of the
         // other tools
-        $(".whiteboard-tool[tool=mouse]").click();
+        /*  $(".whiteboard-tool[tool=mouse]").click();
         $(".whiteboard-tool").prop("disabled", true);
         $(".whiteboard-edit-group > button").prop("disabled", true);
-        $(".whiteboard-edit-group").addClass("group-disabled");
-        $("#whiteboardUnlockBtn").hide();
-        $("#whiteboardLockBtn").show();
+        $(".whiteboard-edit-group").addClass("group-disabled"); */
     }
 
     /**
      * Deactivate read-only mode
      */
     deactivateReadOnlyMode() {
-        if (ConfigService.isReadOnly) return;
-
-        //this.#readOnlyActive = false;
-        $(".whiteboard-tool").prop("disabled", false);
-        $(".whiteboard-edit-group > button").prop("disabled", false);
-        $(".whiteboard-edit-group").removeClass("group-disabled");
+        if (ConfigService.isReadOnly || !ConfigService.isAdmin) {
+            return;
+        } else {
+            this.#readOnlyActive = false;
+        }
         $("#whiteboardUnlockBtn").show();
         $("#whiteboardLockBtn").hide();
 
         // restore previously selected tool
         const { previousToolHtmlElem } = this;
         if (previousToolHtmlElem) previousToolHtmlElem.click();
+
+        /* $(".whiteboard-tool").prop("disabled", false);
+        $(".whiteboard-edit-group > button").prop("disabled", false);
+        $(".whiteboard-edit-group").removeClass("group-disabled"); */
     }
 }
 

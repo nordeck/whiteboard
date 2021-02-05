@@ -13,7 +13,7 @@ class WhiteboardInfo {
      * @private
      * @type {boolean}
      */
-    #isReadOnly = false;
+    #isReadOnly = true;
     get isReadOnly() {
         return this.#isReadOnly;
     }
