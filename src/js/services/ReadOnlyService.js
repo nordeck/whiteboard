@@ -27,7 +27,7 @@ class ReadOnlyService {
         if (ConfigService.isAdmin) {
             this.#readOnlyActive = false;
         } else {
-            return;
+            this.#readOnlyActive = true;
         }
 
         $("#whiteboardUnlockBtn").hide();
@@ -46,8 +46,8 @@ class ReadOnlyService {
      * Deactivate read-only mode
      */
     deactivateReadOnlyMode() {
-        if (ConfigService.isReadOnly || !ConfigService.isAdmin) {
-            return;
+        if (ConfigService.isReadOnly && !ConfigService.isAdmin) {
+            this.#readOnlyActive = true;
         } else {
             this.#readOnlyActive = false;
         }
