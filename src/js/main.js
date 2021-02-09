@@ -195,7 +195,8 @@ function initWhiteboard() {
             };
             $.ajax({
                 type: "POST",
-                url: "http://127.0.0.1:3001/verify/user_in_room",
+                url:
+                    "https://user-verification-service.element-widgets.dev.nordeck.systems/verify/user_in_room",
                 data: JSON.stringify(data),
                 success: (data) => {
                     const result = checkUserRole(data);
