@@ -53,6 +53,9 @@ class widgetProviderService {
         }
         return this.openIdToken;
     };
+    getRoomId() {
+        return this.roomId;
+    }
 
     onReady() {
         console.log("READY");

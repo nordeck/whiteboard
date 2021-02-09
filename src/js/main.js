@@ -190,7 +190,7 @@ function initWhiteboard() {
             let accessToken = await widgetProviderService.getOpenIdToken();
             let data = {
                 matrix_server_name: accessToken.matrix_server_name,
-                room_id: "!ZAsOtuQLwwjSqpyjlH:synapse.dev.nordeck.systems",
+                room_id: widgetProviderService.getRoomId(),
                 token: accessToken.access_token,
             };
             $.ajax({
