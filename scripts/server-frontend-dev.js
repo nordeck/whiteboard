@@ -14,6 +14,7 @@ const devServerConfig = {
             ws: true,
         },
     },
+    https: true,
 };
 
 function startFrontendDevServer(port) {
