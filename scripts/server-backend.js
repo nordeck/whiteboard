@@ -250,6 +250,14 @@ function startBackendServer(port) {
                 WhiteboardInfoBackendService.setReadOnly(whiteboardId, isReadOnly);
             }
         });
+
+        socket.on("setPresentation", function (content) {
+            console.log("CONTENT", content);
+            content = escapeAllContentStrings(content);
+            if (accessToken === "" || accessToken == content["at"]) {
+                WhiteboardInfoBackendService.setPresentation(whiteboardId, content);
+            }
+        });
     });
 
     //Prevent cross site scripting (xss)
