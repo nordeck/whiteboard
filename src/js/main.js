@@ -11,6 +11,8 @@ import InfoService from "./services/InfoService";
 import { getSubDir } from "./utils";
 import ConfigService from "./services/ConfigService";
 import { v4 as uuidv4 } from "uuid";
+import widgetProviderService from "./services/widgetProviderService";
+import { checkUserRole } from "./services/verificationService";
 
 const urlParams = new URLSearchParams(window.location.search);
 let whiteboardId = urlParams.get("whiteboardid");
@@ -184,6 +186,29 @@ function initWhiteboard() {
                 windowWidthHeight: { w: $(window).width(), h: $(window).height() },
             });
         });
+        const evaluateUserRole = async () => {
+            let accessToken = await widgetProviderService.getOpenIdToken();
+            let data = {
+                matrix_server_name: accessToken.matrix_server_name,
+                room_id: "!ZAsOtuQLwwjSqpyjlH:synapse.dev.nordeck.systems",
+                token: accessToken.access_token,
+            };
+            $.ajax({
+                type: "POST",
+                url: "http://127.0.0.1:3001/verify/user_in_room",
+                data: JSON.stringify(data),
+                success: (data) => {
+                    const result = checkUserRole(data);
+                    if (result) {
+                        ConfigService.setIsAdmin(result);
+                        ReadOnlyService.deactivateReadOnlyMode();
+                    }
+                },
+                dataType: "json",
+                contentType: "application/json",
+            });
+        };
+        evaluateUserRole().catch(console.log);
 
         // view only
         $("#whiteboardLockBtn")
@@ -295,14 +320,8 @@ function initWhiteboard() {
             .click(function () {
                 whiteboard.redoWhiteboardClick();
             });
-
-        if (ConfigService.isAdmin) {
-            $("#whiteboardUnlockBtn").hide();
-            $("#whiteboardLockBtn").show();
-        } else {
-            $("#whiteboardUnlockBtn").remove();
-            $("#whiteboardLockBtn").remove();
-        }
+        $("#whiteboardUnlockBtn").hide();
+        $("#whiteboardLockBtn").hide();
 
         // switch tool
         $(".whiteboard-tool")

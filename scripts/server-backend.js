@@ -219,7 +219,6 @@ function startBackendServer(port) {
                             whiteboardId
                         ),
                         isReadOnly: ReadOnlyBackendService.isReadOnly(whiteboardId),
-                        isAdmin: true,
                     },
                 });
 

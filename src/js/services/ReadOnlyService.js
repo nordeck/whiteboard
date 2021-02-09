@@ -9,7 +9,11 @@ class ReadOnlyService {
      */
     #readOnlyActive = true;
     get readOnlyActive() {
+        if (ConfigService.isAdmin) return false;
         return this.#readOnlyActive;
+    }
+    setReadOnlyActive(value) {
+        this.#readOnlyActive = value;
     }
 
     /**
@@ -25,14 +29,19 @@ class ReadOnlyService {
      */
     activateReadOnlyMode() {
         if (ConfigService.isAdmin) {
-            this.#readOnlyActive = false;
-        } else {
-            this.#readOnlyActive = true;
+            $("#whiteboardUnlockBtn").hide();
+            $("#whiteboardLockBtn").show();
+            return;
         }
-
+        this.#readOnlyActive = true;
         $("#whiteboardUnlockBtn").hide();
-        $("#whiteboardLockBtn").show();
+        $("#whiteboardLockBtn").hide();
         this.#previousToolHtmlElem = $(".whiteboard-tool.active");
+        $(".whiteboard-tool[tool=mouse]").click();
+        $(".whiteboard-tool").prop("disabled", true);
+        $(".whiteboard-edit-group > button").prop("disabled", true);
+        $(".whiteboard-edit-group").addClass("group-disabled");
+        $("#saveAsImageBtn").remove();
 
         // switch to mouse tool to prevent the use of the
         // other tools
@@ -46,21 +55,27 @@ class ReadOnlyService {
      * Deactivate read-only mode
      */
     deactivateReadOnlyMode() {
-        if (ConfigService.isReadOnly && !ConfigService.isAdmin) {
-            this.#readOnlyActive = true;
+        this.#readOnlyActive = false;
+        if (ConfigService.isAdmin) {
+            if (ConfigService.isReadOnly) {
+                $("#whiteboardUnlockBtn").hide();
+                $("#whiteboardLockBtn").show();
+            } else {
+                $("#whiteboardUnlockBtn").show();
+                $("#whiteboardLockBtn").hide();
+            }
         } else {
-            this.#readOnlyActive = false;
+            $("#whiteboardUnlockBtn").hide();
+            $("#whiteboardLockBtn").hide();
         }
-        $("#whiteboardUnlockBtn").show();
-        $("#whiteboardLockBtn").hide();
 
         // restore previously selected tool
         const { previousToolHtmlElem } = this;
         if (previousToolHtmlElem) previousToolHtmlElem.click();
 
-        /* $(".whiteboard-tool").prop("disabled", false);
+        $(".whiteboard-tool").prop("disabled", false);
         $(".whiteboard-edit-group > button").prop("disabled", false);
-        $(".whiteboard-edit-group").removeClass("group-disabled"); */
+        $(".whiteboard-edit-group").removeClass("group-disabled");
     }
 }
 

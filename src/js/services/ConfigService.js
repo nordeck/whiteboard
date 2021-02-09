@@ -32,7 +32,10 @@ class ConfigService {
     /**
      * @type {boolean}
      */
-    #isAdmin = true;
+    #isAdmin = false;
+    setIsAdmin(value) {
+        this.#isAdmin = value;
+    }
     get isAdmin() {
         return this.#isAdmin;
     }
