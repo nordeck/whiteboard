@@ -1,7 +1,7 @@
 import { WidgetApi } from "matrix-widget-api";
 import * as qs from "querystring";
 
-class widgetProviderService {
+class WidgetProviderService {
     constructor() {
         const widgetQuery = qs.parse(window.location.hash.substring(1));
         const query = Object.assign({}, qs.parse(window.location.search.substring(1)), widgetQuery);
@@ -17,11 +17,16 @@ class widgetProviderService {
         this.isInitializing = true;
         this.isReady = false;
         this.roomId =
-            mainWidgetId && mainWidgetId.indexOf("_") ? mainWidgetId.split("_")[0] : undefined;
+            qsParam("matrix_room_id") ||
+            (mainWidgetId && mainWidgetId.indexOf("_") ? mainWidgetId.split("_")[0] : undefined);
         this.creator =
             mainWidgetId && (mainWidgetId.match(/_/g) || []).length > 1
                 ? mainWidgetId.split("_")[1]
                 : undefined;
+        this.userId = qsParam("matrix_user_id");
+        this.userName = qsParam("matrix_display_name");
+        this.avatarUrl = qsParam("matrix_avatar_url");
+
         this.widgetApi.on("ready", this.onReady);
         if (widgetId) {
             try {
@@ -58,9 +63,8 @@ class widgetProviderService {
     }
 
     onReady() {
-        console.log("READY");
         this.isInitializing = false;
         this.isReady = true;
     }
 }
-export default new widgetProviderService();
+export default new WidgetProviderService();

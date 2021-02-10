@@ -99,7 +99,15 @@ function startBackendServer(port) {
 
         const name = fields["name"] || "";
         const date = fields["date"] || +new Date();
-        const filename = `${readOnlyWid}_${date}.png`;
+        const filename = name || `${readOnlyWid}_${date}.png`;
+        if (
+            !["png", "jpg", "jpeg", "gif", "tiff", "bmp", "webp", "pdf"].some((ext) =>
+                filename.match("." + ext + "$")
+            )
+        ) {
+            console.log("invalid file upload! filetype not allowed!", name);
+            return;
+        }
         let webdavaccess = fields["webdavaccess"] || false;
         try {
             webdavaccess = JSON.parse(webdavaccess);
@@ -113,15 +121,13 @@ function startBackendServer(port) {
                 console.log("Could not create upload folder!", err);
                 return;
             }
-            let imagedata = fields["imagedata"];
-            if (imagedata && imagedata != "") {
+            let data = fields["imagedata"] || fields["data"];
+            if (data && data != "") {
                 //Save from base64 data
-                imagedata = imagedata
-                    .replace(/^data:image\/png;base64,/, "")
-                    .replace(/^data:image\/jpeg;base64,/, "");
+                data = data.replace(/^data:.*?;base64,/, "");
                 console.log(filename, "uploaded");
                 const savingPath = path.join(savingDir, filename);
-                fs.writeFile(savingPath, imagedata, "base64", function (err) {
+                fs.writeFile(savingPath, data, "base64", function (err) {
                     if (err) {
                         console.log("error", err);
                         callback(err);
@@ -148,8 +154,8 @@ function startBackendServer(port) {
                     }
                 });
             } else {
-                callback("no imagedata!");
-                console.log("No image Data found for this upload!", name);
+                callback("no data!");
+                console.log("No data found for this upload!", name);
             }
         });
     }

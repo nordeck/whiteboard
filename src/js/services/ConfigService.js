@@ -85,6 +85,14 @@ class ConfigService {
     }
 
     /**
+     * @type {string}
+     */
+    #userVarificationService = null;
+    get userVarificationService() {
+        return this.#userVarificationService;
+    }
+
+    /**
      * @type {{minDistDelta: number, minTimeDelta: number}}
      */
     #pointerEventsThrottling = { minDistDelta: 0, minTimeDelta: 0 };
@@ -115,6 +123,7 @@ class ConfigService {
             imageDownloadFormat,
             drawBackgroundGrid,
             backgroundGridImage,
+            userVarificationService,
             performance,
         } = common;
 
@@ -123,6 +132,7 @@ class ConfigService {
         this.#imageDownloadFormat = imageDownloadFormat;
         this.#drawBackgroundGrid = drawBackgroundGrid;
         this.#backgroundGridImage = backgroundGridImage;
+        this.#userVarificationService = userVarificationService;
         this.#refreshInfoInterval = 1000 / performance.refreshInfoFreq;
 
         const { whiteboardSpecific } = configFromServer;
@@ -131,8 +141,6 @@ class ConfigService {
         this.#correspondingReadOnlyWid = correspondingReadOnlyWid;
         this.#isReadOnly = isReadOnly;
         this.#isAdmin = isAdmin;
-
-        console.log("Whiteboard config from server:", configFromServer, "parsed:", this);
     }
 
     /**

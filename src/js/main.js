@@ -1,18 +1,19 @@
-import keymage from "keymage";
-import io from "socket.io-client";
-import whiteboard from "./whiteboard";
-import keybinds from "./keybinds";
-import Picker from "vanilla-picker";
 import { dom } from "@fortawesome/fontawesome-svg-core";
+import keymage from "keymage";
 import pdfjsLib from "pdfjs-dist/webpack";
-import shortcutFunctions from "./shortcutFunctions";
-import ReadOnlyService from "./services/ReadOnlyService";
-import InfoService from "./services/InfoService";
-import { getSubDir, blobToDataURL } from "./utils";
-import ConfigService from "./services/ConfigService";
+import io from "socket.io-client";
 import { v4 as uuidv4 } from "uuid";
-import widgetProviderService from "./services/widgetProviderService";
-import { checkUserRole } from "./services/verificationService";
+import Picker from "vanilla-picker";
+import keybinds from "./keybinds";
+import ConfigService from "./services/ConfigService";
+import InfoService from "./services/InfoService";
+import PresentationService from "./services/PresentationService";
+import ReadOnlyService from "./services/ReadOnlyService";
+import { checkUserRole } from "./services/VerificationService";
+import WidgetProviderService from "./services/WidgetProviderService";
+import shortcutFunctions from "./shortcutFunctions";
+import { blobToDataURL, getSubDir, isImageFileName, isPDFFileName } from "./utils";
+import whiteboard from "./whiteboard";
 
 const urlParams = new URLSearchParams(window.location.search);
 let whiteboardId = urlParams.get("whiteboardid");
@@ -35,7 +36,10 @@ if (urlParams.get("whiteboardid") !== whiteboardId) {
     window.location.search = urlParams;
 }
 
-const myUsername = urlParams.get("username") || "unknown" + (Math.random() + "").substring(2, 6);
+const myUsername =
+    urlParams.get("username") ||
+    urlParams.get("matrix_display_name") ||
+    "unknown" + (Math.random() + "").substring(2, 6);
 const accessToken = urlParams.get("accesstoken") || "";
 
 // Custom Html Title
@@ -60,12 +64,12 @@ function main() {
         });
 
         signaling_socket.on("whiteboardInfoUpdate", (info) => {
-            console.log("INFO", info);
             if (info.isReadOnly) {
                 ReadOnlyService.activateReadOnlyMode();
             } else {
                 ReadOnlyService.deactivateReadOnlyMode();
             }
+            PresentationService.updateInfoFromServer(info, signaling_socket);
             InfoService.updateInfoFromServer(info);
             whiteboard.updateSmallestScreenResolution();
         });
@@ -157,6 +161,42 @@ function initWhiteboard() {
             $("#uploadWebDavBtn").show();
         }
 
+        if (ConfigService.userVarificationService) {
+            const evaluateUserRole = async () => {
+                let accessToken = await WidgetProviderService.getOpenIdToken();
+                let data = {
+                    matrix_server_name: accessToken.matrix_server_name,
+                    room_id: WidgetProviderService.getRoomId(),
+                    token: accessToken.access_token,
+                };
+                $.ajax({
+                    type: "POST",
+                    url: `${ConfigService.userVarificationService}/verify/user_in_room`,
+                    data: JSON.stringify(data),
+                    success: (data) => {
+                        const result = checkUserRole(data);
+                        if (result) {
+                            ConfigService.setIsAdmin(result);
+                            ReadOnlyService.deactivateReadOnlyMode();
+                        }
+                    },
+                    dataType: "json",
+                    contentType: "application/json",
+                });
+            };
+            evaluateUserRole().catch(console.log).then(initWhiteboard);
+        } else {
+            ConfigService.setIsAdmin(true);
+            ReadOnlyService.deactivateReadOnlyMode();
+            initWhiteboard();
+        }
+    });
+
+    function initWhiteboard() {
+        if (ConfigService.isAdmin) {
+            $("#displayWhiteboardInfoBtn").toggleClass("displayNone", false);
+        }
+
         whiteboard.loadWhiteboard("#whiteboardContainer", {
             //Load the whiteboard
             whiteboardId: whiteboardId,
@@ -187,30 +227,6 @@ function initWhiteboard() {
                 windowWidthHeight: { w: $(window).width(), h: $(window).height() },
             });
         });
-        const evaluateUserRole = async () => {
-            let accessToken = await widgetProviderService.getOpenIdToken();
-            let data = {
-                matrix_server_name: accessToken.matrix_server_name,
-                room_id: widgetProviderService.getRoomId(),
-                token: accessToken.access_token,
-            };
-            $.ajax({
-                type: "POST",
-                url:
-                    "https://user-verification-service.element-widgets.dev.nordeck.systems/verify/user_in_room",
-                data: JSON.stringify(data),
-                success: (data) => {
-                    const result = checkUserRole(data);
-                    if (result) {
-                        ConfigService.setIsAdmin(result);
-                        ReadOnlyService.deactivateReadOnlyMode();
-                    }
-                },
-                dataType: "json",
-                contentType: "application/json",
-            });
-        };
-        evaluateUserRole().catch(console.log);
 
         // view only
         $("#whiteboardLockBtn")
@@ -563,24 +579,24 @@ function initWhiteboard() {
                     });
             });
 
-        $("#displayWhiteboardInfoBtn")
-            .off("click")
-            .click(() => {
-                InfoService.toggleDisplayInfo();
-            });
-
         // disabled Buttons for not Admin
-        if (!ConfigService.isAdmin && InfoService.isReadOnly) {
+        if (!ConfigService.isAdmin && ConfigService.isReadOnly) {
             $(".whiteboard-tool[tool=mouse]").click();
             $(".whiteboard-tool").prop("disabled", true);
             $(".whiteboard-edit-group > button").prop("disabled", true);
             $(".whiteboard-edit-group").addClass("group-disabled");
             $("#saveAsImageBtn").addClass("displayNone");
+            $("#displayWhiteboardInfoBtn").toggleClass("displayNone", true);
         } else {
             $(".whiteboard-tool").prop("disabled", false);
             $(".whiteboard-edit-group > button").prop("disabled", false);
             $(".whiteboard-edit-group").removeClass("group-disabled");
             $("#saveAsImageBtn").removeClass("displayNone");
+            $("#displayWhiteboardInfoBtn")
+                .off("click")
+                .click(() => {
+                    InfoService.toggleDisplayInfo();
+                });
         }
 
         var btnsMini = false;
@@ -654,16 +670,12 @@ function initWhiteboard() {
                     var filename = e.originalEvent.dataTransfer.files[0]["name"];
                     if (isImageFileName(filename)) {
                         var blob = e.originalEvent.dataTransfer.files[0];
-                        var reader = new window.FileReader();
-                        reader.readAsDataURL(blob);
-                        reader.onloadend = function () {
-                            const base64data = reader.result;
+                        blobToDataURL(blob).then((base64data) => {
                             uploadImgAndAddToWhiteboard(base64data);
-                        };
+                        });
                     } else if (isPDFFileName(filename)) {
                         //Handle PDF Files
                         var blob = e.originalEvent.dataTransfer.files[0];
-                        var pdfUrl = URL.createObjectURL(blob);
 
                         var reader = new window.FileReader();
                         reader.onloadend = function () {
@@ -695,7 +707,6 @@ function initWhiteboard() {
                                         .click(function () {
                                             if (pageNumber < pdf.numPages) pageNumber++;
                                             showPDFPageAsImage(pageNumber);
-                                            console.log("PAGENUMBER", pageNumber);
                                         });
 
                                     // previous page button
@@ -705,7 +716,6 @@ function initWhiteboard() {
                                         .click(function () {
                                             if (pageNumber > 1) pageNumber--;
                                             showPDFPageAsImage(pageNumber);
-                                            console.log("PAGENUMBER", pageNumber);
                                         });
 
                                     modalDiv
@@ -714,14 +724,11 @@ function initWhiteboard() {
                                         .click(function () {
                                             if (currentDataUrl) {
                                                 $(".basicalert").remove();
-                                                console.log("PDFFATA: ", pdfData);
-                                                console.log("BLOB: ", blob);
-                                                console.log("PDFURL: ", pdfUrl);
-                                                console.log("LOADINGTASK: ", loadingTask);
-                                                console.log("PDF: ", pdf);
-                                                console.log("currentDataUrl: ", currentDataUrl);
-                                                blobToDataURL(blob).then((base64URL) => {
-                                                    uploadPdfAndStartPresentation(base64URL);
+                                                blobToDataURL(blob).then((base64data) => {
+                                                    uploadPdfAndStartPresentation(
+                                                        base64data,
+                                                        pageNumber
+                                                    );
                                                 });
                                             }
                                         });
@@ -755,8 +762,6 @@ function initWhiteboard() {
                                     function showPDFPageAsImage(pageNumber) {
                                         // Fetch the page
                                         pdf.getPage(pageNumber).then(function (page) {
-                                            console.log("Page loaded: ", page);
-
                                             var scale = 1.5;
                                             var viewport = page.getViewport({ scale: scale });
 
@@ -779,7 +784,6 @@ function initWhiteboard() {
                                                 );
                                                 currentDataUrl = dataUrl;
                                                 modalDiv.find("img").attr("src", dataUrl);
-                                                console.log("Page rendered: ", dataUrl);
                                             });
                                         });
                                     }
@@ -851,17 +855,28 @@ function initWhiteboard() {
             if (ConfigService.readOnlyOnWhiteboardLoad) ReadOnlyService.activateReadOnlyMode();
             else ReadOnlyService.deactivateReadOnlyMode();
 
-            if (ConfigService.displayInfoOnWhiteboardLoad) InfoService.displayInfo();
-            else InfoService.hideInfo();
+            if (ConfigService.displayInfoOnWhiteboardLoad && !ConfigService.isReadOnly) {
+                InfoService.displayInfo();
+            } else {
+                InfoService.hideInfo();
+            }
+            if (!ConfigService.isAdmin) {
+                $("#displayWhiteboardInfoBtn").toggleClass("displayNone", true);
+            }
         } else {
             // in dev
-            ReadOnlyService.deactivateReadOnlyMode();
-            InfoService.displayInfo();
+            if (!ConfigService.isAdmin) {
+                InfoService.hideInfo();
+                $("#displayWhiteboardInfoBtn").toggleClass("displayNone", true);
+            } else {
+                ReadOnlyService.deactivateReadOnlyMode();
+                InfoService.displayInfo();
+            }
         }
 
         // In any case, if we are on read-only whiteboard we activate read-only mode
         if (ConfigService.isReadOnly) ReadOnlyService.activateReadOnlyMode();
-    });
+    }
 
     //Prevent site from changing tab on drag&drop
     window.addEventListener(
@@ -898,8 +913,7 @@ function initWhiteboard() {
                 const rootUrl = document.URL.substr(0, document.URL.lastIndexOf("/"));
                 whiteboard.addImgToCanvasByUrl(
                     `${rootUrl}/uploads/${correspondingReadOnlyWid}/${filename}`
-                ); //Add image to canvas
-                console.log("Image uploaded!");
+                );
             },
             error: function (err) {
                 showBasicAlert("Failed to upload frame: " + JSON.stringify(err));
@@ -907,26 +921,26 @@ function initWhiteboard() {
         });
     }
 
-    function uploadPdfAndStartPresentation(base64data) {
+    function uploadPdfAndStartPresentation(base64data, pageNumber) {
         const date = +new Date();
+        const { correspondingReadOnlyWid } = ConfigService;
+        const filename = `${correspondingReadOnlyWid}_${date}.pdf`;
         $.ajax({
             type: "POST",
             url: document.URL.substr(0, document.URL.lastIndexOf("/")) + "/api/upload",
             data: {
-                imagedata: base64data,
+                data: base64data,
                 whiteboardId: whiteboardId,
                 date: date,
                 at: accessToken,
+                name: filename,
             },
             success: function (msg) {
-                const { correspondingReadOnlyWid } = ConfigService;
-                const filename = `${correspondingReadOnlyWid}_${date}.pdf`;
                 const rootUrl = document.URL.substr(0, document.URL.lastIndexOf("/"));
                 signaling_socket.emit("setPresentation", {
                     url: `${rootUrl}/uploads/${correspondingReadOnlyWid}/${filename}`,
+                    page: pageNumber || 1,
                 });
-                //Add image to canvas
-                console.log("pdf uploaded!");
             },
             error: function (err) {
                 showBasicAlert("Failed to upload frame: " + JSON.stringify(err));
@@ -966,20 +980,6 @@ function initWhiteboard() {
         });
     }
 
-    // verify if filename refers to an image
-    function isImageFileName(filename) {
-        var extension = filename.split(".")[filename.split(".").length - 1];
-        var known_extensions = ["png", "jpg", "jpeg", "gif", "tiff", "bmp", "webp"];
-        return known_extensions.includes(extension.toLowerCase());
-    }
-
-    // verify if filename refers to an pdf
-    function isPDFFileName(filename) {
-        var extension = filename.split(".")[filename.split(".").length - 1];
-        var known_extensions = ["pdf"];
-        return known_extensions.includes(extension.toLowerCase());
-    }
-
     // verify if given url is url to an image
     function isValidImageUrl(url, callback) {
         var img = new Image();
@@ -1017,7 +1017,6 @@ function initWhiteboard() {
                         var reader = new window.FileReader();
                         reader.readAsDataURL(blob);
                         reader.onloadend = function () {
-                            console.log("Uploading image!");
                             let base64data = reader.result;
                             uploadImgAndAddToWhiteboard(base64data);
                         };

@@ -17,6 +17,32 @@ body {
     width: 100%;
 }
 
+#presentationContainer .fullscreen .xCanvasBtn {
+    display: inline !important;
+}
+
+#presentationContainer .fullscreen .fullscreenButton {
+    display: none !important;
+}
+
+#presentationContainer .fullscreen > img {
+    margin: auto !important;
+    position: relative !important;
+    display: block !important;
+}
+
+#presentationContainer .fullscreen {
+    border: none !important;
+}
+
+#presentationContainer .fullscreen .rotationHandle {
+    display: none !important;
+}
+
+#presentationContainer .fullscreen .fa-sort-down {
+    display: none !important;
+}
+
 .btn-group button {
     background: transparent;
     border: 2px solid #636060;

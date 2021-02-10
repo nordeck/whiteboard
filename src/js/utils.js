@@ -34,3 +34,17 @@ export function blobToDataURL(blob) {
         reader.readAsDataURL(blob);
     });
 }
+
+// verify if filename refers to an image
+export function isImageFileName(filename) {
+    var extension = filename.split(".")[filename.split(".").length - 1];
+    var known_extensions = ["png", "jpg", "jpeg", "gif", "tiff", "bmp", "webp"];
+    return known_extensions.includes(extension.toLowerCase());
+}
+
+// verify if filename refers to an pdf
+export function isPDFFileName(filename) {
+    var extension = filename.split(".")[filename.split(".").length - 1];
+    var known_extensions = ["pdf"];
+    return known_extensions.includes(extension.toLowerCase());
+}

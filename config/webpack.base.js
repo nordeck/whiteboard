@@ -23,6 +23,8 @@ const config = {
                 loader: "babel-loader",
                 options: {
                     compact: true,
+                    presets: ["@babel/preset-env"],
+                    plugins: ["@babel/plugin-transform-runtime"],
                 },
             },
             {
