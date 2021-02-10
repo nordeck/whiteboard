@@ -161,7 +161,7 @@ function initWhiteboard() {
             $("#uploadWebDavBtn").show();
         }
 
-        if (ConfigService.userVarificationService) {
+        if (ConfigService.verifyMatrixUser) {
             const evaluateUserRole = async () => {
                 let accessToken = await WidgetProviderService.getOpenIdToken();
                 let data = {
@@ -171,7 +171,7 @@ function initWhiteboard() {
                 };
                 $.ajax({
                     type: "POST",
-                    url: `${ConfigService.userVarificationService}/verify/user_in_room`,
+                    url: "/api/verifyMatrixUser",
                     data: JSON.stringify(data),
                     success: (data) => {
                         const result = checkUserRole(data);
