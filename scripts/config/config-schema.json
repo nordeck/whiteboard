@@ -57,6 +57,9 @@
         "backgroundGridImage": {
           "type": "string"
         },
+        "userVarificationService": {
+          "type": "string"
+        },
         "performance": {
           "type": "object",
           "additionalProperties": false,

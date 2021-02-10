@@ -64,3 +64,10 @@ typings/
 
 # dotenv environment variables file
 .env
+
+
+# webstorm
+/.idea
+
+# vscode
+/.vscode/chrome

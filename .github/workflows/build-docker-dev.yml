@@ -1,0 +1,23 @@
+# This workflow will do clean build of the docker image
+
+name: Docker Image DEV Build
+
+on:
+  push:
+    branches: [nic/env/dev]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: "Build:checkout"
+        uses: actions/checkout@v2
+      - name: "Build:dockerimage"
+        uses: docker/build-push-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.PACKAGE_TOKEN }}
+          repository: nordeck/whiteboard
+          tags: ${{ github.head_ref }}

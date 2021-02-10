@@ -147,7 +147,6 @@
                         class="fas fa-upload"
                     ></i>
                 </button>
-
                 <button
                     style="position: relative;"
                     id="uploadJsonBtn"
@@ -166,7 +165,6 @@
                         class="fas fa-upload"
                     ></i>
                 </button>
-
                 <input style="display: none;" id="myFile" type="file" />
             </div>
 
@@ -251,27 +249,118 @@
             </div>
         </div>
 
+        <div id="presentationContainer" class="displayNone">
+            <div
+                class="dragMe"
+                style="
+                    border: 2px dashed gray;
+                    position: absolute;
+                    left: 15px;
+                    top: 70px;
+                    cursor: move;
+                "
+            >
+                <img style="max-width: 100%; height: 100%;" />
+                <div style="position: absolute; right: 5px; top: 3px;">
+                    <button
+                        style="
+                            margin: 0px 0px;
+                            background: #03a9f4;
+                            padding: 5px;
+                            margin-top: 3px;
+                            color: white;
+                        "
+                        class="previousButton btn btn-default"
+                    >
+                        <i class="fa fa-caret-left"></i>
+                    </button>
+                    <button
+                        style="
+                            margin: 0px 0px;
+                            background: #03a9f4;
+                            padding: 5px;
+                            margin-top: 3px;
+                            color: white;
+                        "
+                        class="nextButton btn btn-default"
+                    >
+                        <i class="fa fa-caret-right"></i>
+                    </button>
+                    <button
+                        style="
+                            margin: 0px 0px;
+                            background: #03a9f4;
+                            padding: 5px;
+                            margin-top: 3px;
+                            color: white;
+                        "
+                        class="fullscreenButton btn btn-default"
+                    >
+                        <i class="fa fa-expand"></i>
+                    </button>
+                    <button
+                        style="
+                            margin: 0px 0px;
+                            background: #03a9f4;
+                            padding: 5px;
+                            margin-top: 3px;
+                            color: white;
+                        "
+                        class="xCanvasBtn btn btn-default"
+                    >
+                        <i class="fa fa-times"></i>
+                    </button>
+                </div>
+                <i
+                    style="
+                        position: absolute;
+                        bottom: -4px;
+                        right: 2px;
+                        font-size: 2em;
+                        color: gray;
+                        transform: rotate(-45deg);
+                    "
+                    class="fas fa-sort-down"
+                    aria-hidden="true"
+                ></i>
+                <div
+                    class="rotationHandle"
+                    style="
+                        position: absolute;
+                        bottom: -30px;
+                        left: 0px;
+                        width: 100%;
+                        text-align: center;
+                        cursor: ew-resize;
+                    "
+                >
+                    <i class="fa fa-undo"></i>
+                </div>
+            </div>
+        </div>
+
         <div id="whiteboardInfoContainer">
             <p><b>Whiteboard information:</b></p>
             <p># connected users: <i id="connectedUsersCount">0</i></p>
             <p>Smallest screen resolution: <i id="smallestScreenResolution">Unknown.</i></p>
             <p># msg. sent to server: <i id="messageSentCount">0</i></p>
             <p># msg. received from server: <i id="messageReceivedCount">0</i></p>
+            <p># is read only: <i id="isReadOnly">false</i></p>
         </div>
 
         <div id="shareWhiteboardDialog" class="displayNone">
             <div class="shareWhiteboardDialogContent">
-                <button
+                <!--  <button
                     class="shareWhiteboardDialogItem"
                     id="shareWhiteboardDialogCopyReadOnlyLink"
                 >
                     <i class="fa fa-lock"></i>&nbsp;Share read-only link
-                </button>
+                </button> -->
                 <button
                     class="shareWhiteboardDialogItem displayNone"
                     id="shareWhiteboardDialogCopyReadWriteLink"
                 >
-                    <i class="fa fa-lock-open"></i>&nbsp;Share read/write link
+                    <i class="fa fa-share-square"></i>&nbsp;Share link
                 </button>
                 <button class="shareWhiteboardDialogItem" id="shareWhiteboardDialogGoBack">
                     <b>Go back to the whiteboard</b>

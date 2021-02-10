@@ -8,6 +8,38 @@ class WhiteboardInfo {
     static defaultScreenResolution = { w: 1000, h: 1000 };
 
     /**
+     * Variable to tell if these info have been sent or not
+     *
+     * @private
+     * @type {boolean}
+     */
+    #isReadOnly = true;
+    get isReadOnly() {
+        return this.#isReadOnly;
+    }
+
+    setReadOnly(readOnly) {
+        this.#isReadOnly = readOnly;
+        this.#hasNonSentUpdates = true;
+    }
+
+    /**
+     * Variable to tell if these info have been sent or not
+     *
+     * @private
+     * @type {object}
+     */
+    #presentation = null;
+    get presentation() {
+        return this.#presentation;
+    }
+
+    setPresentation(presentation) {
+        this.#presentation = presentation;
+        this.#hasNonSentUpdates = true;
+    }
+
+    /**
      * @type {number}
      * @private
      */
@@ -94,6 +126,8 @@ class WhiteboardInfo {
     asObject() {
         const out = {
             nbConnectedUsers: this.#nbConnectedUsers,
+            isReadOnly: this.#isReadOnly,
+            presentation: this.#presentation,
         };
 
         if (config.frontend.showSmallestScreenIndicator) {
@@ -198,6 +232,30 @@ class WhiteboardInfoBackendService {
                 clientId,
                 screenResolution || WhiteboardInfo.defaultScreenResolution
             );
+        }
+    }
+
+    /**
+     * change readOnly of all clients
+     * @param {string} whiteboardId
+     */
+    setReadOnly(whiteboardId, isReadOnly) {
+        const infoByWhiteboard = this.#infoByWhiteboard;
+        const whiteboardServerSideInfo = infoByWhiteboard.get(whiteboardId);
+        if (whiteboardServerSideInfo) {
+            whiteboardServerSideInfo.setReadOnly(isReadOnly);
+        }
+    }
+
+    /**
+     * presentation pdf for all clients
+     * @param {string} whiteboardId
+     */
+    setPresentation(whiteboardId, presentation) {
+        const infoByWhiteboard = this.#infoByWhiteboard;
+        const whiteboardServerSideInfo = infoByWhiteboard.get(whiteboardId);
+        if (whiteboardServerSideInfo) {
+            whiteboardServerSideInfo.setPresentation(presentation);
         }
     }
 

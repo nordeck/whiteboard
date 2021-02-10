@@ -1,10 +1,10 @@
 import { dom } from "@fortawesome/fontawesome-svg-core";
-import Point from "./classes/Point";
-import ReadOnlyService from "./services/ReadOnlyService";
-import InfoService from "./services/InfoService";
-import ThrottlingService from "./services/ThrottlingService";
-import ConfigService from "./services/ConfigService";
 import html2canvas from "html2canvas";
+import Point from "./classes/Point";
+import ConfigService from "./services/ConfigService";
+import InfoService from "./services/InfoService";
+import ReadOnlyService from "./services/ReadOnlyService";
+import ThrottlingService from "./services/ThrottlingService";
 
 const RAD_TO_DEG = 180.0 / Math.PI;
 const DEG_TO_RAD = Math.PI / 180.0;
@@ -1307,8 +1307,6 @@ const whiteboard = {
                     backgroundColor: "rgba(0, 0, 0, 0)",
                     removeContainer: true,
                 }).then(function (canvas) {
-                    console.log("canvas", canvas);
-
                     destCtx.drawImage(canvas, left, top);
                     textBoxCnt--;
                     checkForReturn();

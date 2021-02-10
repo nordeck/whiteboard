@@ -1,16 +1,19 @@
-import keymage from "keymage";
-import io from "socket.io-client";
-import whiteboard from "./whiteboard";
-import keybinds from "./keybinds";
-import Picker from "vanilla-picker";
 import { dom } from "@fortawesome/fontawesome-svg-core";
+import keymage from "keymage";
 import pdfjsLib from "pdfjs-dist/webpack";
-import shortcutFunctions from "./shortcutFunctions";
-import ReadOnlyService from "./services/ReadOnlyService";
-import InfoService from "./services/InfoService";
-import { getSubDir } from "./utils";
-import ConfigService from "./services/ConfigService";
+import io from "socket.io-client";
 import { v4 as uuidv4 } from "uuid";
+import Picker from "vanilla-picker";
+import keybinds from "./keybinds";
+import ConfigService from "./services/ConfigService";
+import InfoService from "./services/InfoService";
+import PresentationService from "./services/PresentationService";
+import ReadOnlyService from "./services/ReadOnlyService";
+import { checkUserRole } from "./services/VerificationService";
+import WidgetProviderService from "./services/WidgetProviderService";
+import shortcutFunctions from "./shortcutFunctions";
+import { blobToDataURL, getSubDir, isImageFileName, isPDFFileName } from "./utils";
+import whiteboard from "./whiteboard";
 
 const urlParams = new URLSearchParams(window.location.search);
 let whiteboardId = urlParams.get("whiteboardid");
@@ -33,7 +36,10 @@ if (urlParams.get("whiteboardid") !== whiteboardId) {
     window.location.search = urlParams;
 }
 
-const myUsername = urlParams.get("username") || "unknown" + (Math.random() + "").substring(2, 6);
+const myUsername =
+    urlParams.get("username") ||
+    urlParams.get("matrix_display_name") ||
+    "unknown" + (Math.random() + "").substring(2, 6);
 const accessToken = urlParams.get("accesstoken") || "";
 
 // Custom Html Title
@@ -58,6 +64,12 @@ function main() {
         });
 
         signaling_socket.on("whiteboardInfoUpdate", (info) => {
+            if (info.isReadOnly) {
+                ReadOnlyService.activateReadOnlyMode();
+            } else {
+                ReadOnlyService.deactivateReadOnlyMode();
+            }
+            PresentationService.updateInfoFromServer(info, signaling_socket);
             InfoService.updateInfoFromServer(info);
             whiteboard.updateSmallestScreenResolution();
         });
@@ -149,11 +161,47 @@ function initWhiteboard() {
             $("#uploadWebDavBtn").show();
         }
 
+        if (ConfigService.userVarificationService) {
+            const evaluateUserRole = async () => {
+                let accessToken = await WidgetProviderService.getOpenIdToken();
+                let data = {
+                    matrix_server_name: accessToken.matrix_server_name,
+                    room_id: WidgetProviderService.getRoomId(),
+                    token: accessToken.access_token,
+                };
+                $.ajax({
+                    type: "POST",
+                    url: `${ConfigService.userVarificationService}/verify/user_in_room`,
+                    data: JSON.stringify(data),
+                    success: (data) => {
+                        const result = checkUserRole(data);
+                        if (result) {
+                            ConfigService.setIsAdmin(result);
+                            ReadOnlyService.deactivateReadOnlyMode();
+                        }
+                    },
+                    dataType: "json",
+                    contentType: "application/json",
+                });
+            };
+            evaluateUserRole().catch(console.log).then(initWhiteboard);
+        } else {
+            ConfigService.setIsAdmin(true);
+            ReadOnlyService.deactivateReadOnlyMode();
+            initWhiteboard();
+        }
+    });
+
+    function initWhiteboard() {
+        if (ConfigService.isAdmin) {
+            $("#displayWhiteboardInfoBtn").toggleClass("displayNone", false);
+        }
+
         whiteboard.loadWhiteboard("#whiteboardContainer", {
             //Load the whiteboard
             whiteboardId: whiteboardId,
             username: btoa(myUsername),
-            backgroundGridUrl: "./images/" + ConfigService.backgroundGridImage,
+            //backgroundGridUrl: "./images/" + ConfigService.backgroundGridImage,
             sendFunction: function (content) {
                 if (ReadOnlyService.readOnlyActive) return;
                 //ADD IN LATER THROUGH CONFIG
@@ -179,6 +227,21 @@ function initWhiteboard() {
                 windowWidthHeight: { w: $(window).width(), h: $(window).height() },
             });
         });
+
+        // view only
+        $("#whiteboardLockBtn")
+            .off("click")
+            .click(() => {
+                signaling_socket.emit("setReadOnly", { isReadOnly: false });
+                //ReadOnlyService.deactivateReadOnlyMode();
+            });
+
+        $("#whiteboardUnlockBtn")
+            .off("click")
+            .click(() => {
+                signaling_socket.emit("setReadOnly", { isReadOnly: true });
+                //ReadOnlyService.activateReadOnlyMode();
+            });
 
         /*----------------/
         Whiteboard actions
@@ -275,20 +338,8 @@ function initWhiteboard() {
             .click(function () {
                 whiteboard.redoWhiteboardClick();
             });
-
-        // view only
-        $("#whiteboardLockBtn")
-            .off("click")
-            .click(() => {
-                ReadOnlyService.deactivateReadOnlyMode();
-            });
-        $("#whiteboardUnlockBtn")
-            .off("click")
-            .click(() => {
-                ReadOnlyService.activateReadOnlyMode();
-            });
         $("#whiteboardUnlockBtn").hide();
-        $("#whiteboardLockBtn").show();
+        $("#whiteboardLockBtn").hide();
 
         // switch tool
         $(".whiteboard-tool")
@@ -466,6 +517,10 @@ function initWhiteboard() {
                 $("#myFile").click();
             });
 
+        if (!ConfigService.isAdmin) {
+            $("#shareWhiteboardBtn").remove();
+        }
+
         $("#shareWhiteboardBtn")
             .off("click")
             .click(() => {
@@ -519,16 +574,30 @@ function initWhiteboard() {
                     .click(() => {
                         $("#shareWhiteboardDialogMessage")
                             .toggleClass("displayNone", false)
-                            .text("Read/write link copied to clipboard ✓");
+                            .text("link copied to clipboard ✓");
                         urlToClipboard();
                     });
             });
 
-        $("#displayWhiteboardInfoBtn")
-            .off("click")
-            .click(() => {
-                InfoService.toggleDisplayInfo();
-            });
+        // disabled Buttons for not Admin
+        if (!ConfigService.isAdmin && ConfigService.isReadOnly) {
+            $(".whiteboard-tool[tool=mouse]").click();
+            $(".whiteboard-tool").prop("disabled", true);
+            $(".whiteboard-edit-group > button").prop("disabled", true);
+            $(".whiteboard-edit-group").addClass("group-disabled");
+            $("#saveAsImageBtn").addClass("displayNone");
+            $("#displayWhiteboardInfoBtn").toggleClass("displayNone", true);
+        } else {
+            $(".whiteboard-tool").prop("disabled", false);
+            $(".whiteboard-edit-group > button").prop("disabled", false);
+            $(".whiteboard-edit-group").removeClass("group-disabled");
+            $("#saveAsImageBtn").removeClass("displayNone");
+            $("#displayWhiteboardInfoBtn")
+                .off("click")
+                .click(() => {
+                    InfoService.toggleDisplayInfo();
+                });
+        }
 
         var btnsMini = false;
         $("#minMaxBtn")
@@ -601,12 +670,9 @@ function initWhiteboard() {
                     var filename = e.originalEvent.dataTransfer.files[0]["name"];
                     if (isImageFileName(filename)) {
                         var blob = e.originalEvent.dataTransfer.files[0];
-                        var reader = new window.FileReader();
-                        reader.readAsDataURL(blob);
-                        reader.onloadend = function () {
-                            const base64data = reader.result;
+                        blobToDataURL(blob).then((base64data) => {
                             uploadImgAndAddToWhiteboard(base64data);
-                        };
+                        });
                     } else if (isPDFFileName(filename)) {
                         //Handle PDF Files
                         var blob = e.originalEvent.dataTransfer.files[0];
@@ -618,23 +684,57 @@ function initWhiteboard() {
                             var loadingTask = pdfjsLib.getDocument({ data: pdfData });
                             loadingTask.promise.then(
                                 function (pdf) {
-                                    console.log("PDF loaded");
-
                                     var currentDataUrl = null;
+                                    var pageNumber = 1;
                                     var modalDiv = $(
                                         "<div>" +
-                                            "Page: <select></select> " +
-                                            '<button style="margin-bottom: 3px;" class="modalBtn"><i class="fas fa-upload"></i> Upload to Whiteboard</button>' +
+                                            'Page: <button id="previous"><</button><select></select><button id="next">></button>  ' +
+                                            '<button id="startPresentation" style="margin-bottom: 3px;" class="modalBtn"><i class="fas fa-chalkboard-teacher"></i> Start Presentation</button>   ' +
+                                            '<button id="uploadToWhiteboard" style="margin-bottom: 3px;" class="modalBtn"><i class="fas fa-upload"></i> Upload to Whiteboard</button>' +
                                             '<img style="width:100%;" src=""/>' +
                                             "</div>"
                                     );
 
                                     modalDiv.find("select").change(function () {
-                                        showPDFPageAsImage(parseInt($(this).val()));
+                                        pageNumber = $(this).val();
+                                        showPDFPageAsImage(pageNumber);
                                     });
 
+                                    // next page button
                                     modalDiv
-                                        .find("button")
+                                        .find("#next")
+                                        .off("click")
+                                        .click(function () {
+                                            if (pageNumber < pdf.numPages) pageNumber++;
+                                            showPDFPageAsImage(pageNumber);
+                                        });
+
+                                    // previous page button
+                                    modalDiv
+                                        .find("#previous")
+                                        .off("click")
+                                        .click(function () {
+                                            if (pageNumber > 1) pageNumber--;
+                                            showPDFPageAsImage(pageNumber);
+                                        });
+
+                                    modalDiv
+                                        .find("#startPresentation")
+                                        .off("click")
+                                        .click(function () {
+                                            if (currentDataUrl) {
+                                                $(".basicalert").remove();
+                                                blobToDataURL(blob).then((base64data) => {
+                                                    uploadPdfAndStartPresentation(
+                                                        base64data,
+                                                        pageNumber
+                                                    );
+                                                });
+                                            }
+                                        });
+
+                                    modalDiv
+                                        .find("#uploadToWhiteboard")
                                         .off("click")
                                         .click(function () {
                                             if (currentDataUrl) {
@@ -658,12 +758,10 @@ function initWhiteboard() {
                                     // render newly added icons
                                     dom.i2svg();
 
-                                    showPDFPageAsImage(1);
+                                    showPDFPageAsImage(pageNumber);
                                     function showPDFPageAsImage(pageNumber) {
                                         // Fetch the page
                                         pdf.getPage(pageNumber).then(function (page) {
-                                            console.log("Page loaded");
-
                                             var scale = 1.5;
                                             var viewport = page.getViewport({ scale: scale });
 
@@ -680,10 +778,12 @@ function initWhiteboard() {
                                             };
                                             var renderTask = page.render(renderContext);
                                             renderTask.promise.then(function () {
-                                                var dataUrl = canvas.toDataURL("image/jpeg", 1.0);
+                                                var dataUrl = canvas.toDataURL(
+                                                    "application/pdf",
+                                                    1.0
+                                                );
                                                 currentDataUrl = dataUrl;
                                                 modalDiv.find("img").attr("src", dataUrl);
-                                                console.log("Page rendered");
                                             });
                                         });
                                     }
@@ -755,17 +855,28 @@ function initWhiteboard() {
             if (ConfigService.readOnlyOnWhiteboardLoad) ReadOnlyService.activateReadOnlyMode();
             else ReadOnlyService.deactivateReadOnlyMode();
 
-            if (ConfigService.displayInfoOnWhiteboardLoad) InfoService.displayInfo();
-            else InfoService.hideInfo();
+            if (ConfigService.displayInfoOnWhiteboardLoad && !ConfigService.isReadOnly) {
+                InfoService.displayInfo();
+            } else {
+                InfoService.hideInfo();
+            }
+            if (!ConfigService.isAdmin) {
+                $("#displayWhiteboardInfoBtn").toggleClass("displayNone", true);
+            }
         } else {
             // in dev
-            ReadOnlyService.deactivateReadOnlyMode();
-            InfoService.displayInfo();
+            if (!ConfigService.isAdmin) {
+                InfoService.hideInfo();
+                $("#displayWhiteboardInfoBtn").toggleClass("displayNone", true);
+            } else {
+                ReadOnlyService.deactivateReadOnlyMode();
+                InfoService.displayInfo();
+            }
         }
 
         // In any case, if we are on read-only whiteboard we activate read-only mode
         if (ConfigService.isReadOnly) ReadOnlyService.activateReadOnlyMode();
-    });
+    }
 
     //Prevent site from changing tab on drag&drop
     window.addEventListener(
@@ -802,8 +913,34 @@ function initWhiteboard() {
                 const rootUrl = document.URL.substr(0, document.URL.lastIndexOf("/"));
                 whiteboard.addImgToCanvasByUrl(
                     `${rootUrl}/uploads/${correspondingReadOnlyWid}/${filename}`
-                ); //Add image to canvas
-                console.log("Image uploaded!");
+                );
+            },
+            error: function (err) {
+                showBasicAlert("Failed to upload frame: " + JSON.stringify(err));
+            },
+        });
+    }
+
+    function uploadPdfAndStartPresentation(base64data, pageNumber) {
+        const date = +new Date();
+        const { correspondingReadOnlyWid } = ConfigService;
+        const filename = `${correspondingReadOnlyWid}_${date}.pdf`;
+        $.ajax({
+            type: "POST",
+            url: document.URL.substr(0, document.URL.lastIndexOf("/")) + "/api/upload",
+            data: {
+                data: base64data,
+                whiteboardId: whiteboardId,
+                date: date,
+                at: accessToken,
+                name: filename,
+            },
+            success: function (msg) {
+                const rootUrl = document.URL.substr(0, document.URL.lastIndexOf("/"));
+                signaling_socket.emit("setPresentation", {
+                    url: `${rootUrl}/uploads/${correspondingReadOnlyWid}/${filename}`,
+                    page: pageNumber || 1,
+                });
             },
             error: function (err) {
                 showBasicAlert("Failed to upload frame: " + JSON.stringify(err));
@@ -843,20 +980,6 @@ function initWhiteboard() {
         });
     }
 
-    // verify if filename refers to an image
-    function isImageFileName(filename) {
-        var extension = filename.split(".")[filename.split(".").length - 1];
-        var known_extensions = ["png", "jpg", "jpeg", "gif", "tiff", "bmp", "webp"];
-        return known_extensions.includes(extension.toLowerCase());
-    }
-
-    // verify if filename refers to an pdf
-    function isPDFFileName(filename) {
-        var extension = filename.split(".")[filename.split(".").length - 1];
-        var known_extensions = ["pdf"];
-        return known_extensions.includes(extension.toLowerCase());
-    }
-
     // verify if given url is url to an image
     function isValidImageUrl(url, callback) {
         var img = new Image();
@@ -894,7 +1017,6 @@ function initWhiteboard() {
                         var reader = new window.FileReader();
                         reader.readAsDataURL(blob);
                         reader.onloadend = function () {
-                            console.log("Uploading image!");
                             let base64data = reader.result;
                             uploadImgAndAddToWhiteboard(base64data);
                         };

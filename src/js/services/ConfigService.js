@@ -30,6 +30,17 @@ class ConfigService {
     }
 
     /**
+     * @type {boolean}
+     */
+    #isAdmin = false;
+    setIsAdmin(value) {
+        this.#isAdmin = value;
+    }
+    get isAdmin() {
+        return this.#isAdmin;
+    }
+
+    /**
      * @type {{displayInfo: boolean, setReadOnly: boolean}}
      * @readonly
      */
@@ -74,6 +85,14 @@ class ConfigService {
     }
 
     /**
+     * @type {string}
+     */
+    #userVarificationService = null;
+    get userVarificationService() {
+        return this.#userVarificationService;
+    }
+
+    /**
      * @type {{minDistDelta: number, minTimeDelta: number}}
      */
     #pointerEventsThrottling = { minDistDelta: 0, minTimeDelta: 0 };
@@ -104,6 +123,7 @@ class ConfigService {
             imageDownloadFormat,
             drawBackgroundGrid,
             backgroundGridImage,
+            userVarificationService,
             performance,
         } = common;
 
@@ -112,15 +132,15 @@ class ConfigService {
         this.#imageDownloadFormat = imageDownloadFormat;
         this.#drawBackgroundGrid = drawBackgroundGrid;
         this.#backgroundGridImage = backgroundGridImage;
+        this.#userVarificationService = userVarificationService;
         this.#refreshInfoInterval = 1000 / performance.refreshInfoFreq;
 
         const { whiteboardSpecific } = configFromServer;
-        const { correspondingReadOnlyWid, isReadOnly } = whiteboardSpecific;
+        const { correspondingReadOnlyWid, isReadOnly, isAdmin } = whiteboardSpecific;
 
         this.#correspondingReadOnlyWid = correspondingReadOnlyWid;
         this.#isReadOnly = isReadOnly;
-
-        console.log("Whiteboard config from server:", configFromServer, "parsed:", this);
+        this.#isAdmin = isAdmin;
     }
 
     /**
