@@ -1,11 +1,9 @@
 # This workflow will do clean build of the docker image
 
-name: Docker Image CI (also tests build)
+name: Docker Image DEV Build
 
 on:
   push:
-    branches: [nic/env/dev]
-  pull_request:
     branches: [nic/env/dev]
 
 jobs:
