@@ -37,18 +37,14 @@ class ReadOnlyService {
         $("#whiteboardUnlockBtn").hide();
         $("#whiteboardLockBtn").hide();
         this.#previousToolHtmlElem = $(".whiteboard-tool.active");
+
+        // switch to mouse tool to prevent the use of the
+        // other tools
         $(".whiteboard-tool[tool=mouse]").click();
         $(".whiteboard-tool").prop("disabled", true);
         $(".whiteboard-edit-group > button").prop("disabled", true);
         $(".whiteboard-edit-group").addClass("group-disabled");
         $("#saveAsImageBtn").remove();
-
-        // switch to mouse tool to prevent the use of the
-        // other tools
-        /*  $(".whiteboard-tool[tool=mouse]").click();
-        $(".whiteboard-tool").prop("disabled", true);
-        $(".whiteboard-edit-group > button").prop("disabled", true);
-        $(".whiteboard-edit-group").addClass("group-disabled"); */
     }
 
     /**
