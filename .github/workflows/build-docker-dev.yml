@@ -20,4 +20,4 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.PACKAGE_TOKEN }}
           repository: nordeck/whiteboard
-          tags: $(date +%s)
+          tags: ${{ github.head_ref }}
