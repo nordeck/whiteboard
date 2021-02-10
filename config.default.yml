@@ -12,6 +12,9 @@ backend:
     # => diminishing this will result in more latency
     whiteboardInfoBroadcastFreq: 1
 
+  # Matrix User Verification Service for use as a matrix widget
+  userVarificationService: "https://user-verification-service.element-widgets.dev.nordeck.systems"
+
 # Frontend configuration
 frontend:
   # When a whiteboard is loaded on a client
@@ -31,11 +34,11 @@ frontend:
   # draw the background grid to images on download ? (If True, even PNGs are also not transparent anymore) -- boolean
   drawBackgroundGrid: false
 
+  # activate matrix user verification
+  verifyMatrixUser: true
+
   # Background Image; Can be "bg_grid.png" or "bg_dots.png"  -- string
   backgroundGridImage: "bg_grid.png"
-
-  # Matrix User Verification Service for use as a matrix widget
-  userVarificationService: "https://user-verification-service.element-widgets.dev.nordeck.systems"
 
   # Frontend performance tweaks
   performance:

@@ -1,5 +1,5 @@
 const path = require("path");
-
+const fetch = require("node-fetch");
 const config = require("./config/config");
 const ReadOnlyBackendService = require("./services/ReadOnlyBackendService");
 const WhiteboardInfoBackendService = require("./services/WhiteboardInfoBackendService");
@@ -7,6 +7,7 @@ const WhiteboardInfoBackendService = require("./services/WhiteboardInfoBackendSe
 function startBackendServer(port) {
     var fs = require("fs-extra");
     var express = require("express");
+    var bodyParser = require("body-parser");
     var formidable = require("formidable"); //form upload processing
 
     const createDOMPurify = require("dompurify"); //Prevent xss
@@ -19,6 +20,7 @@ function startBackendServer(port) {
     var s_whiteboard = require("./s_whiteboard.js");
 
     var app = express();
+    app.use(bodyParser.json());
     app.use(express.static(path.join(__dirname, "..", "dist")));
     app.use("/uploads", express.static(path.join(__dirname, "..", "public", "uploads")));
     var server = require("http").Server(app);
@@ -28,7 +30,33 @@ function startBackendServer(port) {
 
     console.log("Webserver & socketserver running on port:" + port);
 
-    const { accessToken, enableWebdav } = config.backend;
+    const { accessToken, enableWebdav, userVarificationService } = config.backend;
+
+    app.post("/api/verifyMatrixUser", function (req, res) {
+        fetch(`${userVarificationService}/verify/user_in_room`, {
+            method: "POST",
+            body: JSON.stringify(req.body),
+            headers: { "Content-Type": "application/json" },
+        })
+            .then((response) => {
+                if (!response.ok) {
+                    console.log("invalid response from matrix user verification service", response);
+                    res.status(500);
+                    res.end();
+                    return;
+                }
+                return response.json();
+            })
+            .then((response) => {
+                res.send(response);
+                res.end();
+            })
+            .catch((err) => {
+                console.log("failed to call matrix user verification service", err);
+                res.status(500);
+                res.end();
+            });
+    });
 
     app.get("/api/loadwhiteboard", function (req, res) {
         const wid = req["query"]["wid"];

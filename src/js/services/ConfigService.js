@@ -87,9 +87,9 @@ class ConfigService {
     /**
      * @type {string}
      */
-    #userVarificationService = null;
-    get userVarificationService() {
-        return this.#userVarificationService;
+    #verifyMatrixUser = false;
+    get verifyMatrixUser() {
+        return this.#verifyMatrixUser;
     }
 
     /**
@@ -123,7 +123,7 @@ class ConfigService {
             imageDownloadFormat,
             drawBackgroundGrid,
             backgroundGridImage,
-            userVarificationService,
+            verifyMatrixUser,
             performance,
         } = common;
 
@@ -132,7 +132,7 @@ class ConfigService {
         this.#imageDownloadFormat = imageDownloadFormat;
         this.#drawBackgroundGrid = drawBackgroundGrid;
         this.#backgroundGridImage = backgroundGridImage;
-        this.#userVarificationService = userVarificationService;
+        this.#verifyMatrixUser = verifyMatrixUser;
         this.#refreshInfoInterval = 1000 / performance.refreshInfoFreq;
 
         const { whiteboardSpecific } = configFromServer;
