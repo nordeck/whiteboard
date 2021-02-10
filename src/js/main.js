@@ -8,7 +8,7 @@ import pdfjsLib from "pdfjs-dist/webpack";
 import shortcutFunctions from "./shortcutFunctions";
 import ReadOnlyService from "./services/ReadOnlyService";
 import InfoService from "./services/InfoService";
-import { getSubDir } from "./utils";
+import { getSubDir, blobToDataURL } from "./utils";
 import ConfigService from "./services/ConfigService";
 import { v4 as uuidv4 } from "uuid";
 import widgetProviderService from "./services/widgetProviderService";
@@ -60,6 +60,7 @@ function main() {
         });
 
         signaling_socket.on("whiteboardInfoUpdate", (info) => {
+            console.log("INFO", info);
             if (info.isReadOnly) {
                 ReadOnlyService.activateReadOnlyMode();
             } else {
@@ -662,6 +663,7 @@ function initWhiteboard() {
                     } else if (isPDFFileName(filename)) {
                         //Handle PDF Files
                         var blob = e.originalEvent.dataTransfer.files[0];
+                        var pdfUrl = URL.createObjectURL(blob);
 
                         var reader = new window.FileReader();
                         reader.onloadend = function () {
@@ -670,23 +672,62 @@ function initWhiteboard() {
                             var loadingTask = pdfjsLib.getDocument({ data: pdfData });
                             loadingTask.promise.then(
                                 function (pdf) {
-                                    console.log("PDF loaded");
-
                                     var currentDataUrl = null;
+                                    var pageNumber = 1;
                                     var modalDiv = $(
                                         "<div>" +
-                                            "Page: <select></select> " +
-                                            '<button style="margin-bottom: 3px;" class="modalBtn"><i class="fas fa-upload"></i> Upload to Whiteboard</button>' +
+                                            'Page: <button id="previous"><</button><select></select><button id="next">></button>  ' +
+                                            '<button id="startPresentation" style="margin-bottom: 3px;" class="modalBtn"><i class="fas fa-chalkboard-teacher"></i> Start Presentation</button>   ' +
+                                            '<button id="uploadToWhiteboard" style="margin-bottom: 3px;" class="modalBtn"><i class="fas fa-upload"></i> Upload to Whiteboard</button>' +
                                             '<img style="width:100%;" src=""/>' +
                                             "</div>"
                                     );
 
                                     modalDiv.find("select").change(function () {
-                                        showPDFPageAsImage(parseInt($(this).val()));
+                                        pageNumber = $(this).val();
+                                        showPDFPageAsImage(pageNumber);
                                     });
 
+                                    // next page button
                                     modalDiv
-                                        .find("button")
+                                        .find("#next")
+                                        .off("click")
+                                        .click(function () {
+                                            if (pageNumber < pdf.numPages) pageNumber++;
+                                            showPDFPageAsImage(pageNumber);
+                                            console.log("PAGENUMBER", pageNumber);
+                                        });
+
+                                    // previous page button
+                                    modalDiv
+                                        .find("#previous")
+                                        .off("click")
+                                        .click(function () {
+                                            if (pageNumber > 1) pageNumber--;
+                                            showPDFPageAsImage(pageNumber);
+                                            console.log("PAGENUMBER", pageNumber);
+                                        });
+
+                                    modalDiv
+                                        .find("#startPresentation")
+                                        .off("click")
+                                        .click(function () {
+                                            if (currentDataUrl) {
+                                                $(".basicalert").remove();
+                                                console.log("PDFFATA: ", pdfData);
+                                                console.log("BLOB: ", blob);
+                                                console.log("PDFURL: ", pdfUrl);
+                                                console.log("LOADINGTASK: ", loadingTask);
+                                                console.log("PDF: ", pdf);
+                                                console.log("currentDataUrl: ", currentDataUrl);
+                                                blobToDataURL(blob).then((base64URL) => {
+                                                    uploadPdfAndStartPresentation(base64URL);
+                                                });
+                                            }
+                                        });
+
+                                    modalDiv
+                                        .find("#uploadToWhiteboard")
                                         .off("click")
                                         .click(function () {
                                             if (currentDataUrl) {
@@ -710,11 +751,11 @@ function initWhiteboard() {
                                     // render newly added icons
                                     dom.i2svg();
 
-                                    showPDFPageAsImage(1);
+                                    showPDFPageAsImage(pageNumber);
                                     function showPDFPageAsImage(pageNumber) {
                                         // Fetch the page
                                         pdf.getPage(pageNumber).then(function (page) {
-                                            console.log("Page loaded");
+                                            console.log("Page loaded: ", page);
 
                                             var scale = 1.5;
                                             var viewport = page.getViewport({ scale: scale });
@@ -732,10 +773,13 @@ function initWhiteboard() {
                                             };
                                             var renderTask = page.render(renderContext);
                                             renderTask.promise.then(function () {
-                                                var dataUrl = canvas.toDataURL("image/jpeg", 1.0);
+                                                var dataUrl = canvas.toDataURL(
+                                                    "application/pdf",
+                                                    1.0
+                                                );
                                                 currentDataUrl = dataUrl;
                                                 modalDiv.find("img").attr("src", dataUrl);
-                                                console.log("Page rendered");
+                                                console.log("Page rendered: ", dataUrl);
                                             });
                                         });
                                     }
@@ -856,6 +900,33 @@ function initWhiteboard() {
                     `${rootUrl}/uploads/${correspondingReadOnlyWid}/${filename}`
                 ); //Add image to canvas
                 console.log("Image uploaded!");
+            },
+            error: function (err) {
+                showBasicAlert("Failed to upload frame: " + JSON.stringify(err));
+            },
+        });
+    }
+
+    function uploadPdfAndStartPresentation(base64data) {
+        const date = +new Date();
+        $.ajax({
+            type: "POST",
+            url: document.URL.substr(0, document.URL.lastIndexOf("/")) + "/api/upload",
+            data: {
+                imagedata: base64data,
+                whiteboardId: whiteboardId,
+                date: date,
+                at: accessToken,
+            },
+            success: function (msg) {
+                const { correspondingReadOnlyWid } = ConfigService;
+                const filename = `${correspondingReadOnlyWid}_${date}.pdf`;
+                const rootUrl = document.URL.substr(0, document.URL.lastIndexOf("/"));
+                signaling_socket.emit("setPresentation", {
+                    url: `${rootUrl}/uploads/${correspondingReadOnlyWid}/${filename}`,
+                });
+                //Add image to canvas
+                console.log("pdf uploaded!");
             },
             error: function (err) {
                 showBasicAlert("Failed to upload frame: " + JSON.stringify(err));
