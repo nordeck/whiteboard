@@ -8,7 +8,7 @@ import pdfjsLib from "pdfjs-dist/webpack";
 import shortcutFunctions from "./shortcutFunctions";
 import ReadOnlyService from "./services/ReadOnlyService";
 import InfoService from "./services/InfoService";
-import { getSubDir } from "./utils";
+import { getSubDir, blobToDataURL } from "./utils";
 import ConfigService from "./services/ConfigService";
 import { v4 as uuidv4 } from "uuid";
 
@@ -652,8 +652,6 @@ function initWhiteboard() {
                             var loadingTask = pdfjsLib.getDocument({ data: pdfData });
                             loadingTask.promise.then(
                                 function (pdf) {
-                                    console.log("PDF loaded");
-
                                     var currentDataUrl = null;
                                     var pageNumber = 1;
                                     var modalDiv = $(
@@ -696,7 +694,15 @@ function initWhiteboard() {
                                         .click(function () {
                                             if (currentDataUrl) {
                                                 $(".basicalert").remove();
-                                                uploadPdfAndStartPresentation(pdfData);
+                                                console.log("PDFFATA: ", pdfData);
+                                                console.log("BLOB: ", blob);
+                                                console.log("PDFURL: ", pdfUrl);
+                                                console.log("LOADINGTASK: ", loadingTask);
+                                                console.log("PDF: ", pdf);
+                                                console.log("currentDataUrl: ", currentDataUrl);
+                                                blobToDataURL(blob).then((base64URL) => {
+                                                    uploadPdfAndStartPresentation(base64URL);
+                                                });
                                             }
                                         });
 
@@ -747,7 +753,10 @@ function initWhiteboard() {
                                             };
                                             var renderTask = page.render(renderContext);
                                             renderTask.promise.then(function () {
-                                                var dataUrl = canvas.toDataURL("image/jpeg", 1.0);
+                                                var dataUrl = canvas.toDataURL(
+                                                    "application/pdf",
+                                                    1.0
+                                                );
                                                 currentDataUrl = dataUrl;
                                                 modalDiv.find("img").attr("src", dataUrl);
                                                 console.log("Page rendered: ", dataUrl);
@@ -878,7 +887,7 @@ function initWhiteboard() {
         });
     }
 
-    function uploadPdfAndStartPresentation(base64data, width, height, x, y) {
+    function uploadPdfAndStartPresentation(base64data) {
         const date = +new Date();
         $.ajax({
             type: "POST",
@@ -895,10 +904,6 @@ function initWhiteboard() {
                 const rootUrl = document.URL.substr(0, document.URL.lastIndexOf("/"));
                 signaling_socket.emit("setPresentation", {
                     url: `${rootUrl}/uploads/${correspondingReadOnlyWid}/${filename}`,
-                    width: width,
-                    height: height,
-                    x: x,
-                    y: y,
                 });
                 //Add image to canvas
                 console.log("pdf uploaded!");

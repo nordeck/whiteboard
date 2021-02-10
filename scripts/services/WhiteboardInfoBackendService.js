@@ -248,7 +248,7 @@ class WhiteboardInfoBackendService {
     }
 
     /**
-     * change readOnly of all clients
+     * presentation pdf for all clients
      * @param {string} whiteboardId
      */
     setPresentation(whiteboardId, presentation) {
