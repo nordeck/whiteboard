@@ -44,11 +44,10 @@ body {
 }
 
 .btn-group button {
-    background: transparent;
-    border: 2px solid #636060;
-    margin: -1px;
+    background: rgba(141, 151, 165, 0.5);
+    margin: 2px;
     /* Green border */
-    color: black;
+    color: #4b4f58;
     /* White text */
     padding: 11px 14px;
     /* Some padding */
@@ -56,6 +55,8 @@ body {
     /* Pointer/hand icon */
     float: left;
     /* Float the buttons side by side */
+    border: none;
+    border-radius: 8px;
 }
 
 @media (max-device-width: 1024px) {
@@ -123,7 +124,6 @@ button {
 }
 
 .btn-group {
-    background-color: #808080ab;
     margin-left: 5px;
     margin-bottom: 5px;
     float: left;
