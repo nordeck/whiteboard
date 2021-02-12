@@ -11,7 +11,16 @@
         <div id="whiteboardContainer"></div>
 
         <!---Toolbar -!-->
-        <div id="toolbar" style="position: absolute; top: 10px; left: 10px;">
+        <div
+            id="toolbar"
+            style="
+                position: absolute;
+                top: 10px;
+                left: 10px;
+                transform: scale(0.5);
+                transform-origin: top left;
+            "
+        >
             <div class="btn-group">
                 <button
                     id="whiteboardLockBtn"
@@ -237,12 +246,12 @@
                 >
                     <i
                         id="minBtn"
-                        style="position: relative; left: -5px;"
+                        style="position: relative; left: -5px; display: none;"
                         class="fas fa-angle-left"
                     ></i>
                     <i
                         id="maxBtn"
-                        style="position: relative; left: -5px; display: none;"
+                        style="position: relative; left: -5px;"
                         class="fas fa-angle-right"
                     ></i>
                 </button>
