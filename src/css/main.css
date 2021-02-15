@@ -103,20 +103,20 @@ body {
 }
 
 @media (prefers-color-scheme: dark) {
-    #pageLoader {
+    .dark #pageLoader {
         background-color: #363c44;
     }
 
-    body {
+    body.dark {
         background-color: #363c44;
     }
 
-    .btn-group button {
+    .dark .btn-group button {
         background: #21262b;
         color: #a9b2bc;
     }
 
-    .btn-group button i {
+    .dark .btn-group button i {
         color: #a9b2bc;
     }
 
@@ -177,6 +177,11 @@ button::-moz-focus-inner {
  */
 .whiteboard-edit-group.group-disabled > * {
     pointer-events: none;
+    background-color: transparent;
+}
+.whiteboard-edit-group.group-disabled > button.active {
+    background-color: transparent;
+    color: #a9b2bc;
 }
 
 /* Clear floats (clearfix hack) */

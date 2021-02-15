@@ -18,6 +18,10 @@ import whiteboard from "./whiteboard";
 const urlParams = new URLSearchParams(window.location.search);
 let whiteboardId = urlParams.get("whiteboardid");
 const randomid = urlParams.get("randomid");
+const theme = urlParams.get("theme");
+if (theme === "dark") {
+    $("body").addClass("dark");
+}
 
 if (randomid) {
     whiteboardId = uuidv4();
@@ -837,10 +841,16 @@ function initWhiteboard() {
             dragCounter = 0;
             whiteboard.dropIndicator.hide();
         });
+        let colorPickerColor;
+        if (theme === "light") {
+            colorPickerColor = "#000000";
+        } else {
+            colorPickerColor = "#aaa";
+        }
 
         new Picker({
             parent: $("#whiteboardColorpicker")[0],
-            color: "#000000",
+            color: colorPickerColor,
             onChange: function (color) {
                 whiteboard.setDrawColor(color.rgbaString);
             },
