@@ -102,33 +102,31 @@ body {
     animation: rotate 1.2s linear infinite;
 }
 
-@media (prefers-color-scheme: dark) {
-    .dark #pageLoader {
-        background-color: #363c44;
-    }
+.dark #pageLoader {
+    background-color: #363c44;
+}
 
-    body.dark {
-        background-color: #363c44;
-    }
+body.dark {
+    background-color: #363c44;
+}
 
-    .dark .btn-group button {
-        background: #21262b;
-        color: #a9b2bc;
-    }
+.dark .btn-group button {
+    background: #21262b;
+    color: #a9b2bc;
+}
 
-    .dark .btn-group button i {
-        color: #a9b2bc;
-    }
+.dark .btn-group button i {
+    color: #a9b2bc;
+}
 
-    .btn-group button:hover,
-    .btn-group button.active {
-        background-color: #e0e2e5;
-        color: #21262b;
-    }
+.btn-group button:hover,
+.btn-group button.active {
+    background-color: #e0e2e5;
+    color: #21262b;
+}
 
-    #whiteboardLockBtn {
-        color: #21262b;
-    }
+#whiteboardLockBtn {
+    color: #21262b;
 }
 
 @media (max-device-width: 1024px) {
