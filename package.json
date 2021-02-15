@@ -30,6 +30,7 @@
   },
   "dependencies": {
     "ajv": "6.12.2",
+    "body-parser": "^1.19.0",
     "dompurify": "^2.0.17",
     "express": "4.*",
     "formidable": "1.*",
@@ -39,13 +40,12 @@
     "js-yaml": "3.13.1",
     "jsdom": "^14.0.0",
     "matrix-widget-api": "^0.1.0-beta.10",
+    "node-fetch": "^2.6.1",
     "pdfjs-dist": "^2.3.200",
     "querystring": "^0.2.0",
     "socket.io": "2.*",
     "uuid": "^8.1.0",
-    "webdav": "^2.8.0",
-    "node-fetch": "^2.6.1",
-    "body-parser": "^1.19.0"
+    "webdav": "^2.8.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.8.4",
