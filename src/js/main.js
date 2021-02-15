@@ -242,7 +242,7 @@ function initWhiteboard() {
                 signaling_socket.emit("setReadOnly", { isReadOnly: true });
                 //ReadOnlyService.activateReadOnlyMode();
             });
-
+        $("#toolbar").find(".btn-group:not(.minGroup)").hide();
         /*----------------/
         Whiteboard actions
         /----------------*/
@@ -599,7 +599,7 @@ function initWhiteboard() {
                 });
         }
 
-        var btnsMini = false;
+        var btnsMini = true;
         $("#minMaxBtn")
             .off("click")
             .click(function () {
