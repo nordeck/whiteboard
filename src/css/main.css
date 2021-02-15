@@ -49,7 +49,7 @@ body {
     /* Green border */
     color: #4b4f58;
     /* White text */
-    padding: 11px 14px;
+    padding: 5px 7px;
     /* Some padding */
     cursor: pointer;
     /* Pointer/hand icon */
@@ -57,13 +57,16 @@ body {
     /* Float the buttons side by side */
     border: none;
     border-radius: 8px;
+    font-size: 0.8em !important;
+    height: 25px !important;
+    width: 30px !important;
 }
 
 @media (max-device-width: 1024px) {
     .btn-group button {
-        font-size: 3em;
-        height: 135px;
-        width: 150px;
+        font-size: 0.8em !important;
+        height: 25px !important;
+        width: 30px !important;
     }
 
     .minGroup {

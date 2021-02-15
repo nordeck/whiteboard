@@ -11,16 +11,7 @@
         <div id="whiteboardContainer"></div>
 
         <!---Toolbar -!-->
-        <div
-            id="toolbar"
-            style="
-                position: absolute;
-                top: 10px;
-                left: 10px;
-                transform: scale(0.5);
-                transform-origin: top left;
-            "
-        >
+        <div id="toolbar" style="position: absolute; top: 10px; left: 10px;">
             <div class="btn-group">
                 <button
                     id="whiteboardLockBtn"
@@ -77,7 +68,7 @@
                     <i class="fa fa-pencil-alt"></i>
                 </button>
                 <button
-                    style="padding-bottom: 8px; padding-top: 6px;"
+                    style="padding-bottom: 8px; padding-top: 4px;"
                     tool="line"
                     title="draw a line"
                     type="button"
@@ -100,7 +91,7 @@
             </div>
 
             <div class="btn-group whiteboard-edit-group">
-                <button style="width: 190px; cursor: default;">
+                <button style="width: 170px !important; cursor: default;">
                     <div
                         class="activeToolIcon"
                         style="position: absolute; top: 2px; left: 2px; font-size: 0.6em;"
@@ -111,7 +102,7 @@
                         style="
                             position: absolute;
                             left: 11px;
-                            top: 16px;
+                            top: 8px;
                             height: 14px;
                             width: 130px;
                         "
@@ -120,7 +111,7 @@
                     <input
                         title="Thickness"
                         id="whiteboardThicknessSlider"
-                        style="position: absolute; left: 9px; width: 130px; top: 15px;"
+                        style="position: absolute; left: 9px; width: 130px; top: 8px;"
                         type="range"
                         min="1"
                         max="50"
@@ -130,10 +121,10 @@
                         id="whiteboardColorpicker"
                         style="
                             position: absolute;
-                            left: 155px;
-                            top: 10px;
-                            width: 26px;
-                            height: 23px;
+                            left: 145px;
+                            top: 7px;
+                            width: 15px;
+                            height: 15px;
                             border-radius: 3px;
                             border: 1px solid darkgrey;
                         "
@@ -239,21 +230,17 @@
 
             <div class="btn-group minGroup">
                 <button
-                    style="width: 100%; padding: 11px 11px;"
+                    style="width: 100% !important; padding: 5px 9px;"
                     id="minMaxBtn"
                     title="hide buttons"
                     type="button"
                 >
                     <i
                         id="minBtn"
-                        style="position: relative; left: -5px; display: none;"
+                        style="position: relative; display: none;"
                         class="fas fa-angle-left"
                     ></i>
-                    <i
-                        id="maxBtn"
-                        style="position: relative; left: -5px;"
-                        class="fas fa-angle-right"
-                    ></i>
+                    <i id="maxBtn" style="position: relative;" class="fas fa-angle-right"></i>
                 </button>
             </div>
         </div>
