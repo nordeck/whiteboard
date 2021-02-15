@@ -563,7 +563,7 @@ const whiteboard = {
                 _this.ownCursor = $(
                     '<div id="ownCursor" style="background:' +
                         color +
-                        "; border:1px solid gray; position:absolute; width:" +
+                        "; border:2px solid gray; position:absolute; width:" +
                         widthHeight +
                         "px; height:" +
                         widthHeight +

@@ -184,15 +184,15 @@ function initWhiteboard() {
                     contentType: "application/json",
                 });
             };
-            evaluateUserRole().catch(console.log).then(initWhiteboard);
+            evaluateUserRole().catch(console.log).then(loadWhiteboard);
         } else {
             ConfigService.setIsAdmin(true);
             ReadOnlyService.deactivateReadOnlyMode();
-            initWhiteboard();
+            loadWhiteboard();
         }
     });
 
-    function initWhiteboard() {
+    function loadWhiteboard() {
         if (ConfigService.isAdmin) {
             $("#displayWhiteboardInfoBtn").toggleClass("displayNone", false);
         }
@@ -876,6 +876,7 @@ function initWhiteboard() {
 
         // In any case, if we are on read-only whiteboard we activate read-only mode
         if (ConfigService.isReadOnly) ReadOnlyService.activateReadOnlyMode();
+        $("#pageLoader").toggleClass("displayNone", true);
     }
 
     //Prevent site from changing tab on drag&drop

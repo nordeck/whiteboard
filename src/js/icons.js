@@ -24,6 +24,7 @@ import {
     faChalkboardTeacher,
     faCaretRight,
     faCaretLeft,
+    faSlash,
 } from "@fortawesome/free-solid-svg-icons";
 import {
     faSquare,
@@ -31,6 +32,7 @@ import {
     faFile,
     faFileAlt,
     faPlusSquare,
+    faObjectGroup,
 } from "@fortawesome/free-regular-svg-icons";
 
 library.add(
@@ -62,7 +64,9 @@ library.add(
     faTimes,
     faChalkboardTeacher,
     faCaretRight,
-    faCaretLeft
+    faCaretLeft,
+    faObjectGroup,
+    faSlash
 );
 
 dom.i2svg();

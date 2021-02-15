@@ -44,12 +44,12 @@ body {
 }
 
 .btn-group button {
-    background: rgba(141, 151, 165, 0.5);
+    background: #e0e2e5;
     margin: 1px;
     /* Green border */
-    color: #4b4f58;
+    color: #737d8c;
     /* White text */
-    padding: 5px 7px;
+    padding: 5px 5px;
     /* Some padding */
     cursor: pointer;
     /* Pointer/hand icon */
@@ -58,15 +58,84 @@ body {
     border: none;
     border-radius: 8px;
     font-size: 0.8em;
-    height: 25px;
-    width: 30px;
+    height: 32px;
+    width: 32px;
+}
+
+.btn-group button:hover,
+.btn-group button.active {
+    background: #737d8c;
+    color: #e0e2e5;
+}
+
+@keyframes rotate {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+#pageLoader {
+    background-color: #fff;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+
+#pageLoader > div {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-left: -20px;
+    margin-top: -20px;
+    display: block;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 6px solid #0dbd8b;
+    border-color: #0dbd8b transparent #0dbd8b transparent;
+    animation: rotate 1.2s linear infinite;
+}
+
+@media (prefers-color-scheme: dark) {
+    #pageLoader {
+        background-color: #363c44;
+    }
+
+    body {
+        background-color: #363c44;
+    }
+
+    .btn-group button {
+        background: #21262b;
+        color: #a9b2bc;
+    }
+
+    .btn-group button i {
+        color: #a9b2bc;
+    }
+
+    .btn-group button:hover,
+    .btn-group button.active {
+        background-color: #e0e2e5;
+        color: #21262b;
+    }
+
+    #whiteboardLockBtn {
+        color: #21262b;
+    }
 }
 
 @media (max-device-width: 1024px) {
     .btn-group button {
         font-size: 0.8em;
-        height: 25px;
-        width: 30px;
+        height: 32px;
+        width: 32px;
     }
 
     .minGroup {
@@ -77,8 +146,8 @@ body {
 @media (min-device-width: 1024px) {
     .btn-group button {
         font-size: 0.8em;
-        height: 25px;
-        width: 30px;
+        height: 32px;
+        width: 32px;
     }
 
     .minGroup {
@@ -118,10 +187,6 @@ button::-moz-focus-inner {
 
 /* Add a background color on hover */
 
-.btn-group button:hover {
-    background-color: #9a9a9a;
-}
-
 button {
     outline-width: 0;
 }
@@ -131,10 +196,6 @@ button {
     margin-bottom: 5px;
     float: left;
     position: relative;
-}
-
-.whiteboard-tool.active:not(:disabled) {
-    background: var(--selected-icon-bg-color);
 }
 
 #whiteboardThicknessSlider {

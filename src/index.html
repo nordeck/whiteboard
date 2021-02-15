@@ -51,13 +51,12 @@
                     <i class="fa fa-mouse-pointer"></i>
                 </button>
                 <button
-                    style="padding-bottom: 11px;"
                     tool="recSelect"
                     title="Select an area"
                     type="button"
                     class="whiteboard-tool"
                 >
-                    <img src="./images/dottedRec.png" />
+                    <i class="far fa-object-group"></i>
                 </button>
                 <button
                     tool="pen"
@@ -67,14 +66,8 @@
                 >
                     <i class="fa fa-pencil-alt"></i>
                 </button>
-                <button
-                    style="padding-bottom: 8px; padding-top: 4px;"
-                    tool="line"
-                    title="draw a line"
-                    type="button"
-                    class="whiteboard-tool"
-                >
-                    ╱
+                <button tool="line" title="draw a line" type="button" class="whiteboard-tool">
+                    <i class="fa fa-slash"></i>
                 </button>
                 <button tool="rect" title="draw a rectangle" type="button" class="whiteboard-tool">
                     <i class="far fa-square"></i>
@@ -94,7 +87,7 @@
                 <button style="width: 170px; cursor: default;">
                     <div
                         class="activeToolIcon"
-                        style="position: absolute; top: 2px; left: 2px; font-size: 0.6em;"
+                        style="position: absolute; top: 4px; left: 4px; font-size: 0.6em;"
                     >
                         <i class="fa fa-pencil-alt"></i>
                     </div>
@@ -102,7 +95,7 @@
                         style="
                             position: absolute;
                             left: 11px;
-                            top: 7px;
+                            top: 10px;
                             height: 14px;
                             width: 130px;
                         "
@@ -111,7 +104,7 @@
                     <input
                         title="Thickness"
                         id="whiteboardThicknessSlider"
-                        style="position: absolute; left: 9px; width: 130px; top: 7px;"
+                        style="position: absolute; left: 9px; width: 130px; top: 10px;"
                         type="range"
                         min="1"
                         max="50"
@@ -122,7 +115,7 @@
                         style="
                             position: absolute;
                             left: 145px;
-                            top: 5px;
+                            top: 8px;
                             width: 15px;
                             height: 15px;
                             border-radius: 3px;
@@ -137,13 +130,7 @@
                 <button id="addImgToCanvasBtn" title="Upload Image to whiteboard" type="button">
                     <i class="fas fa-image"></i>
                     <i
-                        style="
-                            position: absolute;
-                            top: 3px;
-                            left: 2px;
-                            color: #4b4f58;
-                            font-size: 0.5em;
-                        "
+                        style="position: absolute; top: 4px; left: 4px; font-size: 0.5em;"
                         class="fas fa-upload"
                     ></i>
                 </button>
@@ -155,30 +142,18 @@
                 >
                     <i class="far fa-file-alt"></i>
                     <i
-                        style="
-                            position: absolute;
-                            top: 3px;
-                            left: 2px;
-                            color: #4b4f58;
-                            font-size: 0.5em;
-                        "
+                        style="position: absolute; top: 4px; left: 4px; font-size: 0.5em;"
                         class="fas fa-upload"
                     ></i>
                 </button>
                 <input style="display: none;" id="myFile" type="file" />
             </div>
 
-            <div class="btn-group">
+            <div class="btn-group whiteboard-edit-group">
                 <button id="saveAsImageBtn" title="Save whiteboard as image" type="button">
                     <i class="fas fa-image"></i>
                     <i
-                        style="
-                            position: absolute;
-                            top: 3px;
-                            left: 2px;
-                            color: #4b4f58;
-                            font-size: 0.5em;
-                        "
+                        style="position: absolute; top: 4px; left: 4px; font-size: 0.5em;"
                         class="fas fa-save"
                     ></i>
                 </button>
@@ -190,13 +165,7 @@
                 >
                     <i class="fas fa-globe"></i>
                     <i
-                        style="
-                            position: absolute;
-                            top: 3px;
-                            left: 2px;
-                            color: #4b4f58;
-                            font-size: 0.5em;
-                        "
+                        style="position: absolute; top: 4px; left: 4px; font-size: 0.5em;"
                         class="fas fa-save"
                     ></i>
                 </button>
@@ -208,13 +177,7 @@
                 >
                     <i class="far fa-file-alt"></i>
                     <i
-                        style="
-                            position: absolute;
-                            top: 3px;
-                            left: 2px;
-                            color: #4b4f58;
-                            font-size: 0.5em;
-                        "
+                        style="position: absolute; top: 4px; left: 4px; font-size: 0.5em;"
                         class="fas fa-save"
                     ></i>
                 </button>
@@ -229,12 +192,7 @@
             </div>
 
             <div class="btn-group minGroup">
-                <button
-                    style="width: 100%; padding: 5px 9px;"
-                    id="minMaxBtn"
-                    title="hide buttons"
-                    type="button"
-                >
+                <button id="minMaxBtn" title="hide buttons" type="button">
                     <i
                         id="minBtn"
                         style="position: relative; display: none;"
@@ -366,6 +324,9 @@
                     id="shareWhiteboardDialogMessage"
                 ></p>
             </div>
+        </div>
+        <div id="pageLoader">
+            <div />
         </div>
     </body>
 </html>
