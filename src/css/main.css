@@ -167,6 +167,8 @@ button::-moz-focus-inner {
         rgba(255, 166, 0, 0.666) 10px,
         rgba(255, 166, 0, 0.666) 20px
     );
+    /* border-radius for non admin users when button group is disabled */
+    border-radius: 8px;
 }
 
 /*
