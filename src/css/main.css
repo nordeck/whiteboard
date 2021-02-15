@@ -45,7 +45,7 @@ body {
 
 .btn-group button {
     background: rgba(141, 151, 165, 0.5);
-    margin: 2px;
+    margin: 1px;
     /* Green border */
     color: #4b4f58;
     /* White text */
@@ -57,16 +57,16 @@ body {
     /* Float the buttons side by side */
     border: none;
     border-radius: 8px;
-    font-size: 0.8em !important;
-    height: 25px !important;
-    width: 30px !important;
+    font-size: 0.8em;
+    height: 25px;
+    width: 30px;
 }
 
 @media (max-device-width: 1024px) {
     .btn-group button {
-        font-size: 0.8em !important;
-        height: 25px !important;
-        width: 30px !important;
+        font-size: 0.8em;
+        height: 25px;
+        width: 30px;
     }
 
     .minGroup {
@@ -76,13 +76,13 @@ body {
 
 @media (min-device-width: 1024px) {
     .btn-group button {
-        font-size: 1.2em;
-        height: 45px;
-        width: 50px;
+        font-size: 0.8em;
+        height: 25px;
+        width: 30px;
     }
 
     .minGroup {
-        width: 25px;
+        width: 30px;
     }
 }
 
