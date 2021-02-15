@@ -119,13 +119,13 @@ body.dark {
     color: #a9b2bc;
 }
 
-.btn-group button:hover,
-.btn-group button.active {
+.dark .btn-group button:hover,
+.dark .btn-group button.active {
     background-color: #e0e2e5;
     color: #21262b;
 }
 
-#whiteboardLockBtn {
+.dark #whiteboardLockBtn {
     color: #21262b;
 }
 
