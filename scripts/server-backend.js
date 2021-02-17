@@ -30,7 +30,7 @@ function startBackendServer(port) {
 
     console.log("Webserver & socketserver running on port:" + port);
 
-    const { accessToken, enableWebdav, userVarificationService } = config.backend;
+    const { accessToken, enableWebdav, userVarificationService, adminApiAccessToken } = config.backend;
 
     app.post("/api/verifyMatrixUser", function (req, res) {
         fetch(`${userVarificationService}/verify/user_in_room`, {
@@ -68,6 +68,18 @@ function startBackendServer(port) {
             const ret = s_whiteboard.loadStoredData(widForData);
             res.send(ret);
             res.end();
+        } else {
+            res.status(401); //Unauthorized
+            res.end();
+        }
+    });
+
+    app.post("/api/admin/clearwhiteboard", function (req, res) {
+        const wid = req["query"]["wid"];
+        const at = req["query"]["at"];
+        if (at === adminApiAccessToken) {
+            s_whiteboard.handleEventsAndData({ wid: wid, t: "clear" });
+            clearPresentation(wid);
         } else {
             res.status(401); //Unauthorized
             res.end();
@@ -216,6 +228,16 @@ function startBackendServer(port) {
         }
     }
 
+    function clearPresentation(whiteboardId) {
+        const presentation = WhiteboardInfoBackendService.getPresentationOfWhiteboard(whiteboardId);
+        if (presentation) {
+            const url = new URL(presentation.url);
+            const filePath = path.join("./public", url.pathname);
+            fs.remove(filePath).then(() => console.log(`Removed presentation from storage: ${filePath}`)).catch(console.error);
+            WhiteboardInfoBackendService.setPresentation(whiteboardId, null);
+        }
+    }
+
     io.on("connection", function (socket) {
         let whiteboardId = null;
         socket.on("disconnect", function () {
@@ -236,6 +258,9 @@ function startBackendServer(port) {
                 const readOnlyId = ReadOnlyBackendService.getReadOnlyId(whiteboardId);
                 broadcastTo(readOnlyId);
                 s_whiteboard.handleEventsAndData(content); //save whiteboardchanges on the server
+                if (content["t"] === "clear") {
+                    clearPresentation(whiteboardId);
+                }
             } else {
                 socket.emit("wrongAccessToken", true);
             }
@@ -285,7 +310,6 @@ function startBackendServer(port) {
         });
 
         socket.on("setPresentation", function (content) {
-            console.log("CONTENT", content);
             content = escapeAllContentStrings(content);
             if (accessToken === "" || accessToken == content["at"]) {
                 WhiteboardInfoBackendService.setPresentation(whiteboardId, content);
