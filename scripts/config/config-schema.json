@@ -5,10 +5,17 @@
   "properties": {
     "backend": {
       "type": "object",
-      "required": ["accessToken", "performance", "enableWebdav"],
+      "required": [
+        "accessToken",
+        "performance",
+        "enableWebdav"
+      ],
       "additionalProperties": false,
       "properties": {
         "accessToken": {
+          "type": "string"
+        },
+        "adminApiAccessToken": {
           "type": "string"
         },
         "enableWebdav": {
@@ -20,7 +27,9 @@
         "performance": {
           "additionalProperties": false,
           "type": "object",
-          "required": ["whiteboardInfoBroadcastFreq"],
+          "required": [
+            "whiteboardInfoBroadcastFreq"
+          ],
           "properties": {
             "whiteboardInfoBroadcastFreq": {
               "type": "number",
@@ -33,12 +42,19 @@
     "frontend": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["onWhiteboardLoad", "showSmallestScreenIndicator", "performance"],
+      "required": [
+        "onWhiteboardLoad",
+        "showSmallestScreenIndicator",
+        "performance"
+      ],
       "properties": {
         "onWhiteboardLoad": {
           "type": "object",
           "additionalProperties": false,
-          "required": ["displayInfo", "setReadOnly"],
+          "required": [
+            "displayInfo",
+            "setReadOnly"
+          ],
           "properties": {
             "setReadOnly": {
               "type": "boolean"
@@ -66,7 +82,10 @@
         "performance": {
           "type": "object",
           "additionalProperties": false,
-          "required": ["pointerEventsThrottling", "refreshInfoFreq"],
+          "required": [
+            "pointerEventsThrottling",
+            "refreshInfoFreq"
+          ],
           "properties": {
             "pointerEventsThrottling": {
               "type": "array",
@@ -74,7 +93,11 @@
               "items": {
                 "type": "object",
                 "additionalProperties": false,
-                "required": ["fromUserCount", "minDistDelta", "maxFreq"],
+                "required": [
+                  "fromUserCount",
+                  "minDistDelta",
+                  "maxFreq"
+                ],
                 "properties": {
                   "fromUserCount": {
                     "type": "number",
@@ -100,6 +123,9 @@
       }
     }
   },
-  "required": ["backend", "frontend"],
+  "required": [
+    "backend",
+    "frontend"
+  ],
   "additionalProperties": false
 }

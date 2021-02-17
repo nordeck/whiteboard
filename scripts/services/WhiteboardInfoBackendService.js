@@ -284,6 +284,20 @@ class WhiteboardInfoBackendService {
     }
 
     /**
+     * Get the presentation file of a whiteboard
+     *
+     * @param {string} wid
+     * @returns number|null
+     */
+    getPresentationOfWhiteboard(wid) {
+        const infoByWhiteboard = this.#infoByWhiteboard;
+        const info = infoByWhiteboard.get(wid);
+
+        if (info) return info.presentation;
+        else return null;
+    }
+
+    /**
      * Get the number of clients on a whiteboard
      *
      * @param {string} wid

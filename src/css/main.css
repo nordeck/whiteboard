@@ -237,18 +237,10 @@ button {
     cursor: pointer;
 }
 
-#displayWhiteboardInfoBtn.active {
-    background: var(--selected-icon-bg-color);
-}
-
 #whiteboardInfoContainer {
     position: absolute;
     bottom: 10px;
     right: 10px;
-}
-
-.displayNone {
-    display: none;
 }
 
 #shareWhiteboardDialog {
