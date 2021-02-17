@@ -50,7 +50,7 @@ const whiteboard = {
         whiteboardId: "0",
         username: "unknown",
         sendFunction: null,
-        backgroundGridUrl: "./images/gb_grid.png",
+        backgroundGridUrl: "./images/bg_white.png",
     },
     lastPointerSentTime: 0,
     /**
