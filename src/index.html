@@ -4,14 +4,19 @@
         <title>Whiteboard</title>
         <meta charset="utf-8" />
         <link rel="icon" type="image/vnd.microsoft.icon" href="favicon.ico" />
+        <style>
+            .displayNone {
+                display: none;
+            }
+        </style>
     </head>
 
     <body>
         <!---Whiteboard container -!-->
-        <div id="whiteboardContainer"></div>
+        <div id="whiteboardContainer" class="displayNone"></div>
 
         <!---Toolbar -!-->
-        <div id="toolbar" style="position: absolute; top: 7px; left: 2px;">
+        <div id="toolbar" style="position: absolute; top: 7px; left: 2px;" class="displayNone">
             <div class="btn-group">
                 <!-- TODO: Add translation -->
                 <button
@@ -152,7 +157,7 @@
                 <button
                     style="position: relative;"
                     id="addPdfToCanvasBtn"
-                    title="Pdf hochladen"
+                    title="Upload Pdf to whiteboard"
                     type="button"
                 >
                     <i class="far fa-file-pdf"></i>
@@ -161,7 +166,6 @@
                         class="fas fa-upload"
                     ></i>
                 </button>
-                <!-- TODO: Add translation -->
                 <button
                     style="position: relative;"
                     id="uploadJsonBtn"
@@ -180,14 +184,6 @@
             <div class="btn-group whiteboard-edit-group">
                 <button id="saveAsImageBtn" title="Whiteboard als Bild speichern" type="button">
                     <i class="fas fa-image"></i>
-                    <i
-                        style="position: absolute; top: 4px; left: 4px; font-size: 0.5em;"
-                        class="fas fa-save"
-                    ></i>
-                </button>
-                <!-- TODO: Add translation -->
-                <button id="saveAsPdfBtn" title="Whiteboard als Pdf speichern" type="button">
-                    <i class="far fa-file-pdf"></i>
                     <i
                         style="position: absolute; top: 4px; left: 4px; font-size: 0.5em;"
                         class="fas fa-save"
@@ -220,7 +216,12 @@
                     ></i>
                 </button>
                 <!-- TODO: Add translation -->
-                <button id="shareWhiteboardBtn" title="Whiteboard teilen" type="button">
+                <button
+                    id="shareWhiteboardBtn"
+                    title="Whiteboard teilen"
+                    type="button"
+                    class="displayNone"
+                >
                     <i class="fas fa-share-square"></i>
                 </button>
                 <!-- TODO: Add translation -->
@@ -311,7 +312,7 @@
             </div>
         </div>
 
-        <div id="whiteboardInfoContainer">
+        <div id="whiteboardInfoContainer" class="displayNone">
             <!-- TODO: Add translation -->
             <p><b>Whiteboard Information:</b></p>
             <p># verbundene Benutzer: <i id="connectedUsersCount">0</i></p>

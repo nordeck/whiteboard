@@ -168,27 +168,32 @@ function initWhiteboard() {
         if (ConfigService.verifyMatrixUser) {
             const evaluateUserRole = async () => {
                 let accessToken = await WidgetProviderService.getOpenIdToken();
-                let data = {
-                    matrix_server_name: accessToken.matrix_server_name,
-                    room_id: WidgetProviderService.getRoomId(),
-                    token: accessToken.access_token,
-                };
-                $.ajax({
-                    type: "POST",
-                    url: "/api/verifyMatrixUser",
-                    data: JSON.stringify(data),
-                    success: (data) => {
-                        const result = checkUserRole(data);
-                        if (result) {
-                            ConfigService.setIsAdmin(result);
-                            ReadOnlyService.deactivateReadOnlyMode();
-                        }
-                    },
-                    dataType: "json",
-                    contentType: "application/json",
-                });
+                if (accessToken) {
+                    let data = {
+                        matrix_server_name: accessToken.matrix_server_name,
+                        room_id: WidgetProviderService.getRoomId(),
+                        token: accessToken.access_token,
+                    };
+                    $.ajax({
+                        type: "POST",
+                        url: "/api/verifyMatrixUser",
+                        data: JSON.stringify(data),
+                        success: (data) => {
+                            const result = checkUserRole(data);
+                            if (result) {
+                                ConfigService.setIsAdmin(result);
+                                ReadOnlyService.deactivateReadOnlyMode();
+                            }
+                            loadWhiteboard();
+                        },
+                        dataType: "json",
+                        contentType: "application/json",
+                    });
+                } else {
+                    loadWhiteboard();
+                }
             };
-            evaluateUserRole().catch(console.log).then(loadWhiteboard);
+            evaluateUserRole().catch(console.log);
         } else {
             ConfigService.setIsAdmin(true);
             ReadOnlyService.deactivateReadOnlyMode();
@@ -197,10 +202,6 @@ function initWhiteboard() {
     });
 
     function loadWhiteboard() {
-        if (ConfigService.isAdmin) {
-            $("#displayWhiteboardInfoBtn").toggleClass("displayNone", false);
-        }
-
         whiteboard.loadWhiteboard("#whiteboardContainer", {
             //Load the whiteboard
             whiteboardId: whiteboardId,
@@ -596,18 +597,21 @@ function initWhiteboard() {
             $(".whiteboard-tool").prop("disabled", true);
             $(".whiteboard-edit-group > button").prop("disabled", true);
             $(".whiteboard-edit-group").addClass("group-disabled");
-            $("#saveAsImageBtn").addClass("displayNone");
             $("#displayWhiteboardInfoBtn").toggleClass("displayNone", true);
         } else {
             $(".whiteboard-tool").prop("disabled", false);
             $(".whiteboard-edit-group > button").prop("disabled", false);
             $(".whiteboard-edit-group").removeClass("group-disabled");
-            $("#saveAsImageBtn").removeClass("displayNone");
-            $("#displayWhiteboardInfoBtn")
-                .off("click")
-                .click(() => {
-                    InfoService.toggleDisplayInfo();
-                });
+            if (ConfigService.isAdmin) {
+                $("#displayWhiteboardInfoBtn").toggleClass("displayNone", false);
+                $("#displayWhiteboardInfoBtn")
+                    .off("click")
+                    .click(() => {
+                        InfoService.toggleDisplayInfo();
+                    });
+            } else {
+                $("#displayWhiteboardInfoBtn").toggleClass("displayNone", true);
+            }
         }
 
         var btnsMini = true;
@@ -872,19 +876,19 @@ function initWhiteboard() {
             if (ConfigService.readOnlyOnWhiteboardLoad) ReadOnlyService.activateReadOnlyMode();
             else ReadOnlyService.deactivateReadOnlyMode();
 
-            if (ConfigService.displayInfoOnWhiteboardLoad && !ConfigService.isReadOnly) {
+            if (
+                ConfigService.displayInfoOnWhiteboardLoad &&
+                ConfigService.isAdmin &&
+                !ConfigService.isReadOnly
+            ) {
                 InfoService.displayInfo();
             } else {
                 InfoService.hideInfo();
-            }
-            if (!ConfigService.isAdmin) {
-                $("#displayWhiteboardInfoBtn").toggleClass("displayNone", true);
             }
         } else {
             // in dev
             if (!ConfigService.isAdmin) {
                 InfoService.hideInfo();
-                $("#displayWhiteboardInfoBtn").toggleClass("displayNone", true);
             } else {
                 ReadOnlyService.deactivateReadOnlyMode();
                 InfoService.displayInfo();
@@ -894,6 +898,7 @@ function initWhiteboard() {
         // In any case, if we are on read-only whiteboard we activate read-only mode
         if (ConfigService.isReadOnly) ReadOnlyService.activateReadOnlyMode();
         $("#pageLoader").toggleClass("displayNone", true);
+        $("#whiteboardContainer,#toolbar").toggleClass("displayNone", false);
     }
 
     //Prevent site from changing tab on drag&drop

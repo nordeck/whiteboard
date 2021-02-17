@@ -3,6 +3,9 @@ backend:
   # Access token required for interacting with the server -- string (empty string for no restrictions)
   accessToken: ""
 
+  # Access token required to call admin api endpoints
+  adminApiAccessToken: "Gjt6M85grTy0faqk9HZFhVMtWe1P7v4L"
+
   # Enable the function to save to a webdav-server (check README for more info) -- boolean
   enableWebdav: false
 

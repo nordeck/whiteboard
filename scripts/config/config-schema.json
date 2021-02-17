@@ -11,6 +11,9 @@
         "accessToken": {
           "type": "string"
         },
+        "adminApiAccessToken": {
+          "type": "string"
+        },
         "enableWebdav": {
           "type": "boolean"
         },
