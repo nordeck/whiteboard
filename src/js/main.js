@@ -364,6 +364,13 @@ function initWhiteboard() {
                 showBasicAlert("Please drag the image into the browser.");
             });
 
+        // upload pdf button
+        $("#addPdfToCanvasBtn")
+            .off("click")
+            .click(function () {
+                if (ReadOnlyService.readOnlyActive) return;
+                showBasicAlert("Please drag the pdf into the browser.");
+            });
         // save image as imgae
         $("#saveAsImageBtn")
             .off("click")
