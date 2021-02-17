@@ -175,7 +175,7 @@ button::-moz-focus-inner {
  */
 .whiteboard-edit-group.group-disabled > * {
     pointer-events: none;
-    background-color: transparent;
+    background: transparent !important;
 }
 .whiteboard-edit-group.group-disabled > button.active {
     background-color: transparent;
