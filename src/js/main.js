@@ -118,18 +118,18 @@ function showBasicAlert(html, newOptions) {
     }
     var alertHtml = $(
         '<div class="basicalert" style="position:absolute; left:0px; width:100%; top:70px; font-family: monospace;">' +
-            '<div style="width: 30%; margin: auto; background: #aaaaaa; border-radius: 5px; font-size: 1.2em; border: 1px solid gray;">' +
-            '<div style="border-bottom: 1px solid #676767; background: ' +
-            options["headercolor"] +
-            '; padding-left: 5px; font-size: 0.8em;">' +
-            options["header"] +
-            '<div style="float: right; margin-right: 4px; color: #373737; cursor: pointer;" class="closeAlert">x</div></div>' +
-            '<div style="padding: 10px;" class="htmlcontent"></div>' +
-            '<div style="height: 20px; padding: 10px;"><button class="modalBtn okbtn" style="float: right;">' +
-            options["okBtnText"] +
-            "</button></div>" +
-            "</div>" +
-            "</div>"
+        '<div style="width: 30%; margin: auto; background: #aaaaaa; border-radius: 5px; font-size: 1.2em; border: 1px solid gray;">' +
+        '<div style="border-bottom: 1px solid #676767; background: ' +
+        options["headercolor"] +
+        '; padding-left: 5px; font-size: 0.8em;">' +
+        options["header"] +
+        '<div style="float: right; margin-right: 4px; color: #373737; cursor: pointer;" class="closeAlert">x</div></div>' +
+        '<div style="padding: 10px;" class="htmlcontent"></div>' +
+        '<div style="height: 20px; padding: 10px;"><button class="modalBtn okbtn" style="float: right;">' +
+        options["okBtnText"] +
+        "</button></div>" +
+        "</div>" +
+        "</div>"
     );
     alertHtml.find(".htmlcontent").append(html);
     $("body").append(alertHtml);
@@ -168,27 +168,32 @@ function initWhiteboard() {
         if (ConfigService.verifyMatrixUser) {
             const evaluateUserRole = async () => {
                 let accessToken = await WidgetProviderService.getOpenIdToken();
-                let data = {
-                    matrix_server_name: accessToken.matrix_server_name,
-                    room_id: WidgetProviderService.getRoomId(),
-                    token: accessToken.access_token,
-                };
-                $.ajax({
-                    type: "POST",
-                    url: "/api/verifyMatrixUser",
-                    data: JSON.stringify(data),
-                    success: (data) => {
-                        const result = checkUserRole(data);
-                        if (result) {
-                            ConfigService.setIsAdmin(result);
-                            ReadOnlyService.deactivateReadOnlyMode();
-                        }
-                    },
-                    dataType: "json",
-                    contentType: "application/json",
-                });
+                if (accessToken) {
+                    let data = {
+                        matrix_server_name: accessToken.matrix_server_name,
+                        room_id: WidgetProviderService.getRoomId(),
+                        token: accessToken.access_token,
+                    };
+                    $.ajax({
+                        type: "POST",
+                        url: "/api/verifyMatrixUser",
+                        data: JSON.stringify(data),
+                        success: (data) => {
+                            const result = checkUserRole(data);
+                            if (result) {
+                                ConfigService.setIsAdmin(result);
+                                ReadOnlyService.deactivateReadOnlyMode();
+                            }
+                            loadWhiteboard();
+                        },
+                        dataType: "json",
+                        contentType: "application/json",
+                    });
+                } else {
+                    loadWhiteboard();
+                }
             };
-            evaluateUserRole().catch(console.log).then(loadWhiteboard);
+            evaluateUserRole().catch(console.log);
         } else {
             ConfigService.setIsAdmin(true);
             ReadOnlyService.deactivateReadOnlyMode();
@@ -197,9 +202,6 @@ function initWhiteboard() {
     });
 
     function loadWhiteboard() {
-        if (ConfigService.isAdmin) {
-            $("#displayWhiteboardInfoBtn").toggleClass("displayNone", false);
-        }
 
         whiteboard.loadWhiteboard("#whiteboardContainer", {
             //Load the whiteboard
@@ -436,44 +438,44 @@ function initWhiteboard() {
                 var webdavpassword = localStorage.getItem("webdavpassword") || "";
                 var webDavHtml = $(
                     "<div>" +
-                        "<table>" +
-                        "<tr>" +
-                        "<td>Server URL:</td>" +
-                        '<td><input class="webdavserver" type="text" value="' +
-                        webdavserver +
-                        '" placeholder="https://yourserver.com/remote.php/webdav/"></td>' +
-                        "<td></td>" +
-                        "</tr>" +
-                        "<tr>" +
-                        "<td>Path:</td>" +
-                        '<td><input class="webdavpath" type="text" placeholder="folder" value="' +
-                        webdavpath +
-                        '"></td>' +
-                        '<td style="font-size: 0.7em;"><i>path always have to start & end with "/"</i></td>' +
-                        "</tr>" +
-                        "<tr>" +
-                        "<td>Username:</td>" +
-                        '<td><input class="webdavusername" type="text" value="' +
-                        webdavusername +
-                        '" placeholder="username"></td>' +
-                        '<td style="font-size: 0.7em;"></td>' +
-                        "</tr>" +
-                        "<tr>" +
-                        "<td>Password:</td>" +
-                        '<td><input class="webdavpassword" type="password" value="' +
-                        webdavpassword +
-                        '" placeholder="password"></td>' +
-                        '<td style="font-size: 0.7em;"></td>' +
-                        "</tr>" +
-                        "<tr>" +
-                        '<td style="font-size: 0.7em;" colspan="3">Note: You have to generate and use app credentials if you have 2 Factor Auth activated on your dav/nextcloud server!</td>' +
-                        "</tr>" +
-                        "<tr>" +
-                        "<td></td>" +
-                        '<td colspan="2"><span class="loadingWebdavText" style="display:none;">Saving to webdav, please wait...</span><button class="modalBtn webdavUploadBtn"><i class="fas fa-upload"></i> Start Upload</button></td>' +
-                        "</tr>" +
-                        "</table>" +
-                        "</div>"
+                    "<table>" +
+                    "<tr>" +
+                    "<td>Server URL:</td>" +
+                    '<td><input class="webdavserver" type="text" value="' +
+                    webdavserver +
+                    '" placeholder="https://yourserver.com/remote.php/webdav/"></td>' +
+                    "<td></td>" +
+                    "</tr>" +
+                    "<tr>" +
+                    "<td>Path:</td>" +
+                    '<td><input class="webdavpath" type="text" placeholder="folder" value="' +
+                    webdavpath +
+                    '"></td>' +
+                    '<td style="font-size: 0.7em;"><i>path always have to start & end with "/"</i></td>' +
+                    "</tr>" +
+                    "<tr>" +
+                    "<td>Username:</td>" +
+                    '<td><input class="webdavusername" type="text" value="' +
+                    webdavusername +
+                    '" placeholder="username"></td>' +
+                    '<td style="font-size: 0.7em;"></td>' +
+                    "</tr>" +
+                    "<tr>" +
+                    "<td>Password:</td>" +
+                    '<td><input class="webdavpassword" type="password" value="' +
+                    webdavpassword +
+                    '" placeholder="password"></td>' +
+                    '<td style="font-size: 0.7em;"></td>' +
+                    "</tr>" +
+                    "<tr>" +
+                    '<td style="font-size: 0.7em;" colspan="3">Note: You have to generate and use app credentials if you have 2 Factor Auth activated on your dav/nextcloud server!</td>' +
+                    "</tr>" +
+                    "<tr>" +
+                    "<td></td>" +
+                    '<td colspan="2"><span class="loadingWebdavText" style="display:none;">Saving to webdav, please wait...</span><button class="modalBtn webdavUploadBtn"><i class="fas fa-upload"></i> Start Upload</button></td>' +
+                    "</tr>" +
+                    "</table>" +
+                    "</div>"
                 );
                 webDavHtml
                     .find(".webdavUploadBtn")
@@ -596,18 +598,21 @@ function initWhiteboard() {
             $(".whiteboard-tool").prop("disabled", true);
             $(".whiteboard-edit-group > button").prop("disabled", true);
             $(".whiteboard-edit-group").addClass("group-disabled");
-            $("#saveAsImageBtn").addClass("displayNone");
             $("#displayWhiteboardInfoBtn").toggleClass("displayNone", true);
         } else {
             $(".whiteboard-tool").prop("disabled", false);
             $(".whiteboard-edit-group > button").prop("disabled", false);
             $(".whiteboard-edit-group").removeClass("group-disabled");
-            $("#saveAsImageBtn").removeClass("displayNone");
-            $("#displayWhiteboardInfoBtn")
-                .off("click")
-                .click(() => {
-                    InfoService.toggleDisplayInfo();
-                });
+            if (ConfigService.isAdmin) {
+                $("#displayWhiteboardInfoBtn").toggleClass("displayNone", false);
+                $("#displayWhiteboardInfoBtn")
+                    .off("click")
+                    .click(() => {
+                        InfoService.toggleDisplayInfo();
+                    });
+            } else {
+                $("#displayWhiteboardInfoBtn").toggleClass("displayNone", true);
+            }
         }
 
         var btnsMini = true;
@@ -699,11 +704,11 @@ function initWhiteboard() {
                                     var pageNumber = 1;
                                     var modalDiv = $(
                                         "<div>" +
-                                            'Page: <button id="previous"><</button><select></select><button id="next">></button>  ' +
-                                            '<button id="startPresentation" style="margin-bottom: 3px;" class="modalBtn"><i class="fas fa-chalkboard-teacher"></i> Start Presentation</button>   ' +
-                                            '<button id="uploadToWhiteboard" style="margin-bottom: 3px;" class="modalBtn"><i class="fas fa-upload"></i> Upload to Whiteboard</button>' +
-                                            '<img style="width:100%;" src=""/>' +
-                                            "</div>"
+                                        'Page: <button id="previous"><</button><select></select><button id="next">></button>  ' +
+                                        '<button id="startPresentation" style="margin-bottom: 3px;" class="modalBtn"><i class="fas fa-chalkboard-teacher"></i> Start Presentation</button>   ' +
+                                        '<button id="uploadToWhiteboard" style="margin-bottom: 3px;" class="modalBtn"><i class="fas fa-upload"></i> Upload to Whiteboard</button>' +
+                                        '<img style="width:100%;" src=""/>' +
+                                        "</div>"
                                     );
 
                                     modalDiv.find("select").change(function () {
@@ -872,19 +877,15 @@ function initWhiteboard() {
             if (ConfigService.readOnlyOnWhiteboardLoad) ReadOnlyService.activateReadOnlyMode();
             else ReadOnlyService.deactivateReadOnlyMode();
 
-            if (ConfigService.displayInfoOnWhiteboardLoad && !ConfigService.isReadOnly) {
+            if (ConfigService.displayInfoOnWhiteboardLoad && ConfigService.isAdmin && !ConfigService.isReadOnly) {
                 InfoService.displayInfo();
             } else {
                 InfoService.hideInfo();
-            }
-            if (!ConfigService.isAdmin) {
-                $("#displayWhiteboardInfoBtn").toggleClass("displayNone", true);
             }
         } else {
             // in dev
             if (!ConfigService.isAdmin) {
                 InfoService.hideInfo();
-                $("#displayWhiteboardInfoBtn").toggleClass("displayNone", true);
             } else {
                 ReadOnlyService.deactivateReadOnlyMode();
                 InfoService.displayInfo();
@@ -894,6 +895,7 @@ function initWhiteboard() {
         // In any case, if we are on read-only whiteboard we activate read-only mode
         if (ConfigService.isReadOnly) ReadOnlyService.activateReadOnlyMode();
         $("#pageLoader").toggleClass("displayNone", true);
+        $("#whiteboardContainer,#toolbar").toggleClass("displayNone", false);
     }
 
     //Prevent site from changing tab on drag&drop

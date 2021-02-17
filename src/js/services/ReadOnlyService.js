@@ -44,7 +44,6 @@ class ReadOnlyService {
         $(".whiteboard-tool").prop("disabled", true);
         $(".whiteboard-edit-group > button").prop("disabled", true);
         $(".whiteboard-edit-group").addClass("group-disabled");
-        $("#saveAsImageBtn").remove();
     }
 
     /**
