@@ -33,6 +33,7 @@ import {
     faFileAlt,
     faPlusSquare,
     faObjectGroup,
+    faFilePdf,
 } from "@fortawesome/free-regular-svg-icons";
 
 library.add(
@@ -56,6 +57,7 @@ library.add(
     faCircle,
     faFile,
     faFileAlt,
+    faFilePdf,
     faPlusSquare,
     faLock,
     faLockOpen,
