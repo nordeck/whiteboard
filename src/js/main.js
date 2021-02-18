@@ -14,6 +14,7 @@ import WidgetProviderService from "./services/WidgetProviderService";
 import shortcutFunctions from "./shortcutFunctions";
 import { blobToDataURL, getSubDir, isImageFileName, isPDFFileName } from "./utils";
 import whiteboard from "./whiteboard";
+import jsPDF from "jspdf";
 
 const urlParams = new URLSearchParams(window.location.search);
 let whiteboardId = urlParams.get("whiteboardid");
@@ -401,6 +402,34 @@ function initWhiteboard() {
                         }, 0);
                     }
                 );
+            });
+
+        // save image as imgae
+        $("#saveAsPdfBtn")
+            .off("click")
+            .click(function () {
+                whiteboard.getPdfData().then(function (canvas) {
+                    var myImage = canvas.toDataURL("image/png");
+                    // Adjust width and height
+                    var imgWidth = (canvas.width * 60) / 240;
+                    var imgHeight = (canvas.height * 70) / 240;
+                    // jspdf changes
+                    var pdf = new jsPDF("p", "mm", "a4");
+                    pdf.addImage(myImage, "png", 15, 2, imgWidth, imgHeight); // 2: 19
+                    var w = window.open("about:blank"); //Firefox will not allow downloads without extra window
+                    setTimeout(function () {
+                        //FireFox seems to require a setTimeout for this to work.
+                        var a = document.createElement("a");
+                        a.href = window.URL.createObjectURL(pdf.output("blob"));
+                        a.download = "whiteboard.pdf";
+                        w.document.body.appendChild(a);
+                        a.click();
+                        w.document.body.removeChild(a);
+                        setTimeout(function () {
+                            w.close();
+                        }, 100);
+                    }, 0);
+                });
             });
 
         // save image to json containing steps

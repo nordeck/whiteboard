@@ -1324,6 +1324,12 @@ const whiteboard = {
             checkForReturn();
         };
     },
+    getPdfData() {
+        return html2canvas($("#whiteboardContainer").get(0), {
+            backgroundColor: "rgba(0, 0, 0, 0)",
+            removeContainer: true,
+        });
+    },
     getImageDataJson() {
         var sendObj = [];
         for (var i = 0; i < this.drawBuffer.length; i++) {
