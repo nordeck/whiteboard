@@ -91,7 +91,7 @@ function main() {
         signaling_socket.on("wrongAccessToken", function () {
             if (!accessDenied) {
                 accessDenied = true;
-                showBasicAlert("Access denied! Wrong accessToken!");
+                showBasicAlert("Zugang verwehrt! Falscher Zugangstoken!");
             }
         });
 
@@ -105,7 +105,7 @@ function main() {
 
 function showBasicAlert(html, newOptions) {
     var options = {
-        header: "INFO MESSAGE",
+        header: "INFO",
         okBtnText: "Ok",
         headercolor: "#d25d5d",
         hideAfter: false,
@@ -118,18 +118,18 @@ function showBasicAlert(html, newOptions) {
     }
     var alertHtml = $(
         '<div class="basicalert" style="position:absolute; left:0px; width:100%; top:70px; font-family: monospace;">' +
-        '<div style="width: 30%; margin: auto; background: #aaaaaa; border-radius: 5px; font-size: 1.2em; border: 1px solid gray;">' +
-        '<div style="border-bottom: 1px solid #676767; background: ' +
-        options["headercolor"] +
-        '; padding-left: 5px; font-size: 0.8em;">' +
-        options["header"] +
-        '<div style="float: right; margin-right: 4px; color: #373737; cursor: pointer;" class="closeAlert">x</div></div>' +
-        '<div style="padding: 10px;" class="htmlcontent"></div>' +
-        '<div style="height: 20px; padding: 10px;"><button class="modalBtn okbtn" style="float: right;">' +
-        options["okBtnText"] +
-        "</button></div>" +
-        "</div>" +
-        "</div>"
+            '<div style="width: 30%; margin: auto; background: #aaaaaa; border-radius: 5px; font-size: 1.2em; border: 1px solid gray;">' +
+            '<div style="border-bottom: 1px solid #676767; background: ' +
+            options["headercolor"] +
+            '; padding-left: 5px; font-size: 0.8em;">' +
+            options["header"] +
+            '<div style="float: right; margin-right: 4px; color: #373737; cursor: pointer;" class="closeAlert">x</div></div>' +
+            '<div style="padding: 10px;" class="htmlcontent"></div>' +
+            '<div style="height: 20px; padding: 10px;"><button class="modalBtn okbtn" style="float: right;">' +
+            options["okBtnText"] +
+            "</button></div>" +
+            "</div>" +
+            "</div>"
     );
     alertHtml.find(".htmlcontent").append(html);
     $("body").append(alertHtml);
@@ -202,7 +202,6 @@ function initWhiteboard() {
     });
 
     function loadWhiteboard() {
-
         whiteboard.loadWhiteboard("#whiteboardContainer", {
             //Load the whiteboard
             whiteboardId: whiteboardId,
@@ -367,7 +366,7 @@ function initWhiteboard() {
             .off("click")
             .click(function () {
                 if (ReadOnlyService.readOnlyActive) return;
-                showBasicAlert("Please drag the image into the browser.");
+                showBasicAlert("Bitte das Bild in den Browser ziehen.");
             });
 
         // upload pdf button
@@ -375,7 +374,7 @@ function initWhiteboard() {
             .off("click")
             .click(function () {
                 if (ReadOnlyService.readOnlyActive) return;
-                showBasicAlert("Please drag the pdf into the browser.");
+                showBasicAlert("Bitte das PDF in den Browser ziehen.");
             });
         // save image as imgae
         $("#saveAsImageBtn")
@@ -438,44 +437,44 @@ function initWhiteboard() {
                 var webdavpassword = localStorage.getItem("webdavpassword") || "";
                 var webDavHtml = $(
                     "<div>" +
-                    "<table>" +
-                    "<tr>" +
-                    "<td>Server URL:</td>" +
-                    '<td><input class="webdavserver" type="text" value="' +
-                    webdavserver +
-                    '" placeholder="https://yourserver.com/remote.php/webdav/"></td>' +
-                    "<td></td>" +
-                    "</tr>" +
-                    "<tr>" +
-                    "<td>Path:</td>" +
-                    '<td><input class="webdavpath" type="text" placeholder="folder" value="' +
-                    webdavpath +
-                    '"></td>' +
-                    '<td style="font-size: 0.7em;"><i>path always have to start & end with "/"</i></td>' +
-                    "</tr>" +
-                    "<tr>" +
-                    "<td>Username:</td>" +
-                    '<td><input class="webdavusername" type="text" value="' +
-                    webdavusername +
-                    '" placeholder="username"></td>' +
-                    '<td style="font-size: 0.7em;"></td>' +
-                    "</tr>" +
-                    "<tr>" +
-                    "<td>Password:</td>" +
-                    '<td><input class="webdavpassword" type="password" value="' +
-                    webdavpassword +
-                    '" placeholder="password"></td>' +
-                    '<td style="font-size: 0.7em;"></td>' +
-                    "</tr>" +
-                    "<tr>" +
-                    '<td style="font-size: 0.7em;" colspan="3">Note: You have to generate and use app credentials if you have 2 Factor Auth activated on your dav/nextcloud server!</td>' +
-                    "</tr>" +
-                    "<tr>" +
-                    "<td></td>" +
-                    '<td colspan="2"><span class="loadingWebdavText" style="display:none;">Saving to webdav, please wait...</span><button class="modalBtn webdavUploadBtn"><i class="fas fa-upload"></i> Start Upload</button></td>' +
-                    "</tr>" +
-                    "</table>" +
-                    "</div>"
+                        "<table>" +
+                        "<tr>" +
+                        "<td>Server URL:</td>" +
+                        '<td><input class="webdavserver" type="text" value="' +
+                        webdavserver +
+                        '" placeholder="https://yourserver.com/remote.php/webdav/"></td>' +
+                        "<td></td>" +
+                        "</tr>" +
+                        "<tr>" +
+                        "<td>Path:</td>" +
+                        '<td><input class="webdavpath" type="text" placeholder="folder" value="' +
+                        webdavpath +
+                        '"></td>' +
+                        '<td style="font-size: 0.7em;"><i>path always have to start & end with "/"</i></td>' +
+                        "</tr>" +
+                        "<tr>" +
+                        "<td>Username:</td>" +
+                        '<td><input class="webdavusername" type="text" value="' +
+                        webdavusername +
+                        '" placeholder="username"></td>' +
+                        '<td style="font-size: 0.7em;"></td>' +
+                        "</tr>" +
+                        "<tr>" +
+                        "<td>Password:</td>" +
+                        '<td><input class="webdavpassword" type="password" value="' +
+                        webdavpassword +
+                        '" placeholder="password"></td>' +
+                        '<td style="font-size: 0.7em;"></td>' +
+                        "</tr>" +
+                        "<tr>" +
+                        '<td style="font-size: 0.7em;" colspan="3">Note: You have to generate and use app credentials if you have 2 Factor Auth activated on your dav/nextcloud server!</td>' +
+                        "</tr>" +
+                        "<tr>" +
+                        "<td></td>" +
+                        '<td colspan="2"><span class="loadingWebdavText" style="display:none;">Saving to webdav, please wait...</span><button class="modalBtn webdavUploadBtn"><i class="fas fa-upload"></i> Start Upload</button></td>' +
+                        "</tr>" +
+                        "</table>" +
+                        "</div>"
                 );
                 webDavHtml
                     .find(".webdavUploadBtn")
@@ -515,8 +514,8 @@ function initWhiteboard() {
                         );
                     });
                 showBasicAlert(webDavHtml, {
-                    header: "Save to Webdav",
-                    okBtnText: "cancel",
+                    header: "Sichern in Webdav",
+                    okBtnText: "Abbrechen",
                     headercolor: "#0082c9",
                 });
                 // render newly added icons
@@ -640,7 +639,7 @@ function initWhiteboard() {
                     var j = JSON.parse(e.target.result);
                     whiteboard.loadJsonData(j);
                 } catch (e) {
-                    showBasicAlert("File was not a valid JSON!");
+                    showBasicAlert("Dies ist kein gültige JSON Datei!");
                 }
             };
             reader.readAsText(file);
@@ -704,11 +703,11 @@ function initWhiteboard() {
                                     var pageNumber = 1;
                                     var modalDiv = $(
                                         "<div>" +
-                                        'Page: <button id="previous"><</button><select></select><button id="next">></button>  ' +
-                                        '<button id="startPresentation" style="margin-bottom: 3px;" class="modalBtn"><i class="fas fa-chalkboard-teacher"></i> Start Presentation</button>   ' +
-                                        '<button id="uploadToWhiteboard" style="margin-bottom: 3px;" class="modalBtn"><i class="fas fa-upload"></i> Upload to Whiteboard</button>' +
-                                        '<img style="width:100%;" src=""/>' +
-                                        "</div>"
+                                            'Page: <button id="previous"><</button><select></select><button id="next">></button>  ' +
+                                            '<button id="startPresentation" style="margin-bottom: 3px;" class="modalBtn"><i class="fas fa-chalkboard-teacher"></i> Start Presentation</button>   ' +
+                                            '<button id="uploadToWhiteboard" style="margin-bottom: 3px;" class="modalBtn"><i class="fas fa-upload"></i> Upload to Whiteboard</button>' +
+                                            '<img style="width:100%;" src=""/>' +
+                                            "</div>"
                                     );
 
                                     modalDiv.find("select").change(function () {
@@ -766,8 +765,8 @@ function initWhiteboard() {
                                     }
 
                                     showBasicAlert(modalDiv, {
-                                        header: "Pdf to Image",
-                                        okBtnText: "cancel",
+                                        header: "PDF in Bild umwandeln",
+                                        okBtnText: "Abbrechen",
                                         headercolor: "#0082c9",
                                     });
 
@@ -808,7 +807,7 @@ function initWhiteboard() {
                                     // PDF loading error
 
                                     showBasicAlert(
-                                        "Error loading pdf as image! Check that this is a vaild pdf file!"
+                                        "Beim Laden des PDF als Bild ist ein Fehler aufgetreten! Bitte überprüfe die PDF Datei! "
                                     );
                                     console.error(reason);
                                 }
@@ -816,7 +815,7 @@ function initWhiteboard() {
                         };
                         reader.readAsArrayBuffer(blob);
                     } else {
-                        showBasicAlert("File must be an image!");
+                        showBasicAlert("Die Datei muss eine Bilddatei sein!");
                     }
                 } else {
                     //File from other browser
@@ -843,7 +842,7 @@ function initWhiteboard() {
                                         uploadImgAndAddToWhiteboard(url); //Last option maybe its base64
                                     }
                                 } else {
-                                    showBasicAlert("Can only upload Imagedata!");
+                                    showBasicAlert("Es können nur Bilddateien hochgeladen werden!");
                                 }
                             });
                         }
@@ -877,7 +876,11 @@ function initWhiteboard() {
             if (ConfigService.readOnlyOnWhiteboardLoad) ReadOnlyService.activateReadOnlyMode();
             else ReadOnlyService.deactivateReadOnlyMode();
 
-            if (ConfigService.displayInfoOnWhiteboardLoad && ConfigService.isAdmin && !ConfigService.isReadOnly) {
+            if (
+                ConfigService.displayInfoOnWhiteboardLoad &&
+                ConfigService.isAdmin &&
+                !ConfigService.isReadOnly
+            ) {
                 InfoService.displayInfo();
             } else {
                 InfoService.hideInfo();
@@ -936,7 +939,7 @@ function initWhiteboard() {
                 );
             },
             error: function (err) {
-                showBasicAlert("Failed to upload frame: " + JSON.stringify(err));
+                showBasicAlert("Fehler beim Hochladen des Datenblocks: " + JSON.stringify(err));
             },
         });
     }
@@ -963,7 +966,7 @@ function initWhiteboard() {
                 });
             },
             error: function (err) {
-                showBasicAlert("Failed to upload frame: " + JSON.stringify(err));
+                showBasicAlert("Fehler beim Hochladen des Datenblocks: " + JSON.stringify(err));
             },
         });
     }
@@ -981,7 +984,7 @@ function initWhiteboard() {
                 webdavaccess: JSON.stringify(webdavaccess),
             },
             success: function (msg) {
-                showBasicAlert("Whiteboard was saved to Webdav!", {
+                showBasicAlert("Das Whiteboard wurde in Webdav gespeichert!", {
                     headercolor: "#5c9e5c",
                 });
                 console.log("Image uploaded for webdav!");
@@ -990,10 +993,10 @@ function initWhiteboard() {
             error: function (err) {
                 if (err.status == 403) {
                     showBasicAlert(
-                        "Could not connect to Webdav folder! Please check the credentials and paths and try again!"
+                        "Keine Verbindung zu Webdav möglich! Bitte die Zugangsdaten und den Pfad überprüfen und noch einmal versuchen!"
                     );
                 } else {
-                    showBasicAlert("Unknown Webdav error! ", err);
+                    showBasicAlert("Unbekannter Webdav-Fehler! ", err);
                 }
                 callback(err);
             },
@@ -1046,7 +1049,7 @@ function initWhiteboard() {
 
             if (!imgItemFound && whiteboard.tool != "text") {
                 showBasicAlert(
-                    "Please Drag&Drop the image or pdf into the Whiteboard. (Browsers don't allow copy+past from the filesystem directly)"
+                    "Bitte das Bild oder das PDF direkt in das Whiteboard ziehen. (Es ist nicht möglich Dateien über die Kopierfunktion in den Browser einzufügen)"
                 );
             }
         }
