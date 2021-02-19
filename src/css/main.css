@@ -109,6 +109,9 @@ body {
 body.dark {
     background-color: #363c44;
 }
+.dark .dragOutOverlay {
+    background-color: #5e636a !important;
+}
 
 .dark .btn-group button {
     background: #21262b;
