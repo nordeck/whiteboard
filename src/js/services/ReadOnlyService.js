@@ -36,8 +36,6 @@ class ReadOnlyService {
         this.#readOnlyActive = true;
         $("#whiteboardUnlockBtn").hide();
         $("#whiteboardLockBtn").hide();
-        $(".whiteboard-tool[tool=pen]").removeClass("active");
-        $(".whiteboard-tool[tool=mouse]").addClass("active");
         this.#previousToolHtmlElem = $(".whiteboard-tool.active");
 
         // switch to mouse tool to prevent the use of the
