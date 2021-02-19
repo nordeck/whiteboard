@@ -182,12 +182,21 @@
             </div>
             <!-- TODO: Add translation -->
             <div class="btn-group whiteboard-edit-group">
+                <button id="saveAsImageBtn" title="Whiteboard als Bild speichern" type="button">
+                    <i class="fas fa-image"></i>
+                    <i
+                        style="position: absolute; top: 4px; left: 4px; font-size: 0.5em;"
+                        class="fas fa-save"
+                    ></i>
+                </button>
+                <!-- TODO: Add translation -->
                 <button
-                    id="saveAsImageBtn"
-                    title="Whiteboard Ausschnitt als Bild speichern"
+                    style="position: relative;"
+                    id="saveAsPdfBtn"
+                    title="Whiteboard als Pdf speichern"
                     type="button"
                 >
-                    <i class="fas fa-image"></i>
+                    <i class="far fa-file-pdf"></i>
                     <i
                         style="position: absolute; top: 4px; left: 4px; font-size: 0.5em;"
                         class="fas fa-save"
@@ -220,12 +229,7 @@
                     ></i>
                 </button>
                 <!-- TODO: Add translation -->
-                <button
-                    id="shareWhiteboardBtn"
-                    title="Whiteboard teilen"
-                    type="button"
-                    class="displayNone"
-                >
+                <button id="shareWhiteboardBtn" title="Whiteboard teilen" type="button">
                     <i class="fas fa-share-square"></i>
                 </button>
                 <!-- TODO: Add translation -->

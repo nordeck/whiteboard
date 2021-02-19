@@ -30,7 +30,12 @@ function startBackendServer(port) {
 
     console.log("Webserver & socketserver running on port:" + port);
 
-    const { accessToken, enableWebdav, userVarificationService, adminApiAccessToken } = config.backend;
+    const {
+        accessToken,
+        enableWebdav,
+        userVarificationService,
+        adminApiAccessToken,
+    } = config.backend;
 
     app.post("/api/verifyMatrixUser", function (req, res) {
         fetch(`${userVarificationService}/verify/user_in_room`, {
@@ -233,7 +238,9 @@ function startBackendServer(port) {
         if (presentation) {
             const url = new URL(presentation.url);
             const filePath = path.join("./public", url.pathname);
-            fs.remove(filePath).then(() => console.log(`Removed presentation from storage: ${filePath}`)).catch(console.error);
+            fs.remove(filePath)
+                .then(() => console.log(`Removed presentation from storage: ${filePath}`))
+                .catch(console.error);
             WhiteboardInfoBackendService.setPresentation(whiteboardId, null);
         }
     }

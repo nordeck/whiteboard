@@ -39,6 +39,7 @@
     "jquery-ui-rotatable": "^1.1.0",
     "js-yaml": "3.13.1",
     "jsdom": "^14.0.0",
+    "jspdf": "^2.3.0",
     "matrix-widget-api": "^0.1.0-beta.10",
     "node-fetch": "^2.6.1",
     "pdfjs-dist": "^2.3.200",

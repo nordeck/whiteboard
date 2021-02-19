@@ -1,4 +1,5 @@
 import { dom } from "@fortawesome/fontawesome-svg-core";
+import jsPDF from "jspdf";
 import keymage from "keymage";
 import pdfjsLib from "pdfjs-dist/webpack";
 import io from "socket.io-client";
@@ -402,6 +403,42 @@ function initWhiteboard() {
                         }, 0);
                     }
                 );
+            });
+
+        // save image as imgae
+        $("#saveAsPdfBtn")
+            .off("click")
+            .click(function () {
+                whiteboard.getPdfData().then(function (canvas) {
+                    var myImage = canvas.toDataURL("image/png");
+                    // Adjust width and height
+                    // jspdf changes
+                    var pdf = new jsPDF("p", "mm", "a4");
+                    var width = pdf.internal.pageSize.getWidth();
+                    var height = pdf.internal.pageSize.getHeight();
+                    var scale = Math.min(width / canvas.width, height / canvas.height);
+                    pdf.addImage(
+                        myImage,
+                        "png",
+                        15,
+                        2,
+                        canvas.width * scale,
+                        canvas.height * scale
+                    );
+                    var w = window.open("about:blank"); //Firefox will not allow downloads without extra window
+                    setTimeout(function () {
+                        //FireFox seems to require a setTimeout for this to work.
+                        var a = document.createElement("a");
+                        a.href = window.URL.createObjectURL(pdf.output("blob"));
+                        a.download = "whiteboard.pdf";
+                        w.document.body.appendChild(a);
+                        a.click();
+                        w.document.body.removeChild(a);
+                        setTimeout(function () {
+                            w.close();
+                        }, 100);
+                    }, 0);
+                });
             });
 
         // save image to json containing steps
