@@ -272,3 +272,54 @@ button {
     padding: 5px;
     margin: 5px;
 }
+
+.addToCanvasBtn,
+.addToBackgroundBtn,
+.addToCanvasBtn,
+.xCanvasBtn,
+.fullscreenButton {
+    cursor: pointer;
+    background: #0dbd8b;
+    color: white;
+    border-radius: 8px;
+    border: none;
+    padding: 5px;
+    margin: 0px 0px;
+    margin-top: 3px;
+}
+
+.nextButton,
+.previousButton {
+    cursor: pointer;
+    background: #0dbd8b;
+    color: white;
+    border-radius: 3px;
+    border: none;
+    padding: 5px;
+    margin: 0px 0px;
+    margin-top: 3px;
+}
+
+.nextButton:disabled,
+.previousButton:disabled {
+    color: rgba(16, 16, 16, 0.3);
+    background-color: rgba(239, 239, 239, 0.3);
+    border-color: rgba(118, 118, 118, 0.3);
+}
+
+.nextButton:hover:disabled,
+.previousButton:hover:disabled {
+    color: rgba(16, 16, 16, 0.3);
+    background-color: rgba(239, 239, 239, 0.3);
+    border-color: rgba(118, 118, 118, 0.3);
+}
+
+.addToCanvasBtn:hover,
+.addToBackgroundBtn:hover,
+.addToCanvasBtn:hover,
+.xCanvasBtn:hover,
+.fullscreenButton:hover,
+.nextButton:hover,
+.previousButton:hover {
+    background-color: #0e916c;
+}

@@ -351,8 +351,8 @@ const whiteboard = {
                     `<div class="dragMe" style="position:absolute; left: ${left}px; top: ${top}px; width: ${width}px; border: 2px dotted gray; overflow: hidden; height: ${height}px;" cursor:move;">
                     <canvas style="cursor:move; position:absolute; top:0px; left:0px;" width="${width}" height="${height}"></canvas>
                     <div style="position:absolute; right:5px; top:3px;">
-                    <button draw="1" style="margin: 0px 0px; background: #0dbd8b; padding: 5px; margin-top: 3px; color: white; border-radius: 8px; border: none" class="addToCanvasBtn btn btn-default">Hierhin versetzen</button>
-                    <button style="margin: 0px 0px; background: #0dbd8b; padding: 5px; margin-top: 3px; color: white; border-radius: 8px; border: none" class="xCanvasBtn btn btn-default">x</button>
+                    <button draw="1" class="addToCanvasBtn btn btn-default">Hierhin versetzen</button>
+                    <button class="xCanvasBtn btn btn-default">x</button>
                     </div>
                     </div>`
                 );
@@ -767,9 +767,9 @@ const whiteboard = {
                 url +
                 '">' +
                 '<div style="position:absolute; right:5px; top:3px;">' +
-                '<button draw="1" style="margin: 0px 0px; background: #0dbd8b; padding: 5px; margin-top: 3px; color: white; border-radius: 8px; border: none" class="addToCanvasBtn btn btn-default">Hinzufügen</button> ' +
-                '<button draw="0" style="margin: 0px 0px; background: #0dbd8b; padding: 5px; margin-top: 3px; color: white; border-radius: 8px; border: none" class="addToBackgroundBtn btn btn-default">zum Hintergrund hinzufügen</button> ' +
-                '<button style="margin: 0px 0px; background: #0dbd8b; padding: 5px; margin-top: 3px; color: white; border-radius: 8px; border: none" class="xCanvasBtn btn btn-default">x</button>' +
+                '<button draw="1" class="addToCanvasBtn btn btn-default">Hinzufügen</button> ' +
+                '<button draw="0" class="addToBackgroundBtn btn btn-default">zum Hintergrund hinzufügen</button> ' +
+                '<button class="xCanvasBtn btn btn-default">x</button>' +
                 "</div>" +
                 '<i style="position:absolute; bottom: -4px; right: 2px; font-size: 2em; color: gray; transform: rotate(-45deg);" class="fas fa-sort-down" aria-hidden="true"></i>' +
                 '<div class="rotationHandle" style="position:absolute; bottom: -30px; left: 0px; width:100%; text-align:center; cursor:ew-resize;"><i class="fa fa-undo"></i></div>' +
