@@ -27,7 +27,12 @@ class ReadOnlyService {
     /**
      * Activate read-only mode
      */
-    disableToolbar() {
+    activateReadOnlyMode() {
+        if (ConfigService.isAdmin) {
+            $("#whiteboardUnlockBtn").hide();
+            $("#whiteboardLockBtn").show();
+            return;
+        }
         this.#readOnlyActive = true;
         $("#whiteboardUnlockBtn").hide();
         $("#whiteboardLockBtn").hide();
@@ -41,15 +46,6 @@ class ReadOnlyService {
         $(".whiteboard-tool").prop("disabled", true);
         $(".whiteboard-edit-group > button").prop("disabled", true);
         $(".whiteboard-edit-group").addClass("group-disabled");
-    }
-
-    activateReadOnlyMode() {
-        if (ConfigService.isAdmin) {
-            $("#whiteboardUnlockBtn").hide();
-            $("#whiteboardLockBtn").show();
-            return;
-        }
-        this.disableToolbar();
     }
 
     /**

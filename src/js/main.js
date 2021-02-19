@@ -159,7 +159,6 @@ function showBasicAlert(html, newOptions) {
 
 function initWhiteboard() {
     $(document).ready(function () {
-        ReadOnlyService.disableToolbar();
         // by default set in readOnly mode
         ReadOnlyService.activateReadOnlyMode();
 
@@ -630,7 +629,7 @@ function initWhiteboard() {
             });
 
         // disabled Buttons for not Admin
-        if (!ConfigService.isAdmin && ConfigService.isReadOnly) {
+        if (!ConfigService.isAdmin && InfoService.isReadOnly) {
             $(".whiteboard-tool[tool=mouse]").click();
             $(".whiteboard-tool").prop("disabled", true);
             $(".whiteboard-edit-group > button").prop("disabled", true);
@@ -911,17 +910,10 @@ function initWhiteboard() {
         whiteboard.refreshCursorAppearance();
 
         if (process.env.NODE_ENV === "production") {
-            if (ConfigService.readOnlyOnWhiteboardLoad) ReadOnlyService.activateReadOnlyMode();
-            else ReadOnlyService.deactivateReadOnlyMode();
-
-            if (
-                ConfigService.displayInfoOnWhiteboardLoad &&
-                ConfigService.isAdmin &&
-                !ConfigService.isReadOnly
-            ) {
-                InfoService.displayInfo();
-            } else {
+            if (!ConfigService.isAdmin) {
                 InfoService.hideInfo();
+            } else {
+                ReadOnlyService.deactivateReadOnlyMode();
             }
         } else {
             // in dev
@@ -934,7 +926,6 @@ function initWhiteboard() {
         }
 
         // In any case, if we are on read-only whiteboard we activate read-only mode
-        if (ConfigService.isReadOnly) ReadOnlyService.activateReadOnlyMode();
         $("#pageLoader").toggleClass("displayNone", true);
         $("#whiteboardContainer,#toolbar").toggleClass("displayNone", false);
     }
