@@ -1,4 +1,5 @@
 import { dom } from "@fortawesome/fontawesome-svg-core";
+import jsPDF from "jspdf";
 import keymage from "keymage";
 import pdfjsLib from "pdfjs-dist/webpack";
 import io from "socket.io-client";
@@ -14,7 +15,6 @@ import WidgetProviderService from "./services/WidgetProviderService";
 import shortcutFunctions from "./shortcutFunctions";
 import { blobToDataURL, getSubDir, isImageFileName, isPDFFileName } from "./utils";
 import whiteboard from "./whiteboard";
-import jsPDF from "jspdf";
 
 const urlParams = new URLSearchParams(window.location.search);
 let whiteboardId = urlParams.get("whiteboardid");
@@ -411,11 +411,19 @@ function initWhiteboard() {
                 whiteboard.getPdfData().then(function (canvas) {
                     var myImage = canvas.toDataURL("image/png");
                     // Adjust width and height
-                    var imgWidth = (canvas.width * 60) / 240;
-                    var imgHeight = (canvas.height * 70) / 240;
                     // jspdf changes
                     var pdf = new jsPDF("p", "mm", "a4");
-                    pdf.addImage(myImage, "png", 15, 2, imgWidth, imgHeight); // 2: 19
+                    var width = pdf.internal.pageSize.getWidth();
+                    var height = pdf.internal.pageSize.getHeight();
+                    var scale = Math.min(width / canvas.width, height / canvas.height);
+                    pdf.addImage(
+                        myImage,
+                        "png",
+                        15,
+                        2,
+                        canvas.width * scale,
+                        canvas.height * scale
+                    );
                     var w = window.open("about:blank"); //Firefox will not allow downloads without extra window
                     setTimeout(function () {
                         //FireFox seems to require a setTimeout for this to work.
