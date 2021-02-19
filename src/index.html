@@ -1,106 +1,136 @@
 <!DOCTYPE html>
 <html>
+    <head>
+        <title>Whiteboard</title>
+        <meta charset="utf-8" />
+        <link rel="icon" type="image/vnd.microsoft.icon" href="favicon.ico" />
+        <style>
+            .displayNone {
+                display: none;
+            }
+        </style>
+    </head>
 
-<head>
-    <title>Whiteboard</title>
-    <meta charset="utf-8" />
-    <link rel="icon" type="image/vnd.microsoft.icon" href="favicon.ico" />
-    <style>
-        .displayNone {
-            display: none;
-        }
-    </style>
-</head>
+    <body>
+        <!---Whiteboard container -!-->
+        <div id="whiteboardContainer" class="displayNone"></div>
 
-<body>
-    <!---Whiteboard container -!-->
-    <div id="whiteboardContainer" class="displayNone"></div>
+        <!---Toolbar -!-->
+        <div id="toolbar" style="position: absolute; top: 7px; left: 2px;" class="displayNone">
+            <div class="btn-group">
+                <!-- TODO: Add translation -->
+                <button
+                    id="whiteboardLockBtn"
+                    style="background-color: orange;"
+                    title="Anzeigen und bearbeiten"
+                    type="button"
+                >
+                    <i class="fa fa-lock"></i>
+                </button>
+                <!-- TODO: Add translation -->
+                <button id="whiteboardUnlockBtn" title="Nur anzeigen" type="button">
+                    <i class="fa fa-lock-open"></i>
+                </button>
+            </div>
 
-    <!---Toolbar -!-->
-    <div id="toolbar" style="position: absolute; top: 7px; left: 2px;" class="displayNone">
-        <div class="btn-group">
-            <!-- TODO: Add translation -->
-            <button id="whiteboardLockBtn" style="background-color: orange;" title="Anzeigen und bearbeiten"
-                type="button">
-                <i class="fa fa-lock"></i>
-            </button>
-            <!-- TODO: Add translation -->
-            <button id="whiteboardUnlockBtn" title="Nur anzeigen" type="button">
-                <i class="fa fa-lock-open"></i>
-            </button>
-        </div>
+            <div class="btn-group whiteboard-edit-group">
+                <!-- TODO: Add translation -->
+                <button id="whiteboardTrashBtn" title="Whiteboard löschen" type="button">
+                    <i class="fa fa-trash"></i>
+                </button>
+                <!-- TODO: Add translation -->
+                <button
+                    style="position: absolute; left: 0px; top: 0px; width: 46px; display: none;"
+                    id="whiteboardTrashBtnConfirm"
+                    title="Löschen bestätigen..."
+                    type="button"
+                >
+                    <i class="fa fa-check"></i>
+                </button>
+                <!-- TODO: Add translation -->
+                <button
+                    id="whiteboardUndoBtn"
+                    title="Letzte Aktion rückgängig machen"
+                    type="button"
+                >
+                    <i class="fa fa-undo"></i>
+                </button>
+                <!-- TODO: Add translation -->
+                <button id="whiteboardRedoBtn" title="Wiederherstellen" type="button">
+                    <i class="fa fa-redo"></i>
+                </button>
+            </div>
 
-        <div class="btn-group whiteboard-edit-group">
-            <!-- TODO: Add translation -->
-            <button id="whiteboardTrashBtn" title="Whiteboard löschen" type="button">
-                <i class="fa fa-trash"></i>
-            </button>
-            <!-- TODO: Add translation -->
-            <button style="position: absolute; left: 0px; top: 0px; width: 46px; display: none;"
-                id="whiteboardTrashBtnConfirm" title="Löschen bestätigen..." type="button">
-                <i class="fa fa-check"></i>
-            </button>
-            <!-- TODO: Add translation -->
-            <button id="whiteboardUndoBtn" title="Letzte Aktion rückgängig machen" type="button">
-                <i class="fa fa-undo"></i>
-            </button>
-            <!-- TODO: Add translation -->
-            <button id="whiteboardRedoBtn" title="Wiederherstellen" type="button">
-                <i class="fa fa-redo"></i>
-            </button>
-        </div>
-
-        <div class="btn-group whiteboard-edit-group">
-            <!-- TODO: Add translation -->
-            <button tool="mouse" title="Maus" type="button" class="whiteboard-tool">
-                <i class="fa fa-mouse-pointer"></i>
-            </button>
-            <!-- TODO: Add translation -->
-            <button tool="recSelect" title="Bereich auswählen" type="button" class="whiteboard-tool">
-                <i class="far fa-object-group"></i>
-            </button>
-            <!-- TODO: Add translation -->
-            <button tool="pen" title="Stift" type="button" class="whiteboard-tool active">
-                <i class="fa fa-pencil-alt"></i>
-            </button>
-            <!-- TODO: Add translation -->
-            <button tool="line" title="Strich zeichnen" type="button" class="whiteboard-tool">
-                <i class="fa fa-slash"></i>
-            </button>
-            <!-- TODO: Add translation -->
-            <button tool="rect" title="Rechteck zeichnen" type="button" class="whiteboard-tool">
-                <i class="far fa-square"></i>
-            </button>
-            <!-- TODO: Add translation -->
-            <button tool="circle" title="Kreis zeichnen" type="button" class="whiteboard-tool">
-                <i class="far fa-circle"></i>
-            </button>
-            <!-- TODO: Add translation -->
-            <button tool="text" title="Text schreiben" type="button" class="whiteboard-tool">
-                <i class="fas fa-font"></i>
-            </button>
-            <!-- TODO: Add translation -->
-            <button tool="eraser" title="Radierer" type="button" class="whiteboard-tool">
-                <i class="fa fa-eraser"></i>
-            </button>
-        </div>
-
-        <div class="btn-group whiteboard-edit-group">
-            <button style="width: 170px; cursor: default;">
-                <div class="activeToolIcon" style="position: absolute; top: 4px; left: 4px; font-size: 0.6em;">
+            <div class="btn-group whiteboard-edit-group">
+                <!-- TODO: Add translation -->
+                <button tool="mouse" title="Maus" type="button" class="whiteboard-tool">
+                    <i class="fa fa-mouse-pointer"></i>
+                </button>
+                <!-- TODO: Add translation -->
+                <button
+                    tool="recSelect"
+                    title="Bereich auswählen"
+                    type="button"
+                    class="whiteboard-tool"
+                >
+                    <i class="far fa-object-group"></i>
+                </button>
+                <!-- TODO: Add translation -->
+                <button tool="pen" title="Stift" type="button" class="whiteboard-tool active">
                     <i class="fa fa-pencil-alt"></i>
-                </div>
-                <img style="
+                </button>
+                <!-- TODO: Add translation -->
+                <button tool="line" title="Strich zeichnen" type="button" class="whiteboard-tool">
+                    <i class="fa fa-slash"></i>
+                </button>
+                <!-- TODO: Add translation -->
+                <button tool="rect" title="Rechteck zeichnen" type="button" class="whiteboard-tool">
+                    <i class="far fa-square"></i>
+                </button>
+                <!-- TODO: Add translation -->
+                <button tool="circle" title="Kreis zeichnen" type="button" class="whiteboard-tool">
+                    <i class="far fa-circle"></i>
+                </button>
+                <!-- TODO: Add translation -->
+                <button tool="text" title="Text schreiben" type="button" class="whiteboard-tool">
+                    <i class="fas fa-font"></i>
+                </button>
+                <!-- TODO: Add translation -->
+                <button tool="eraser" title="Radierer" type="button" class="whiteboard-tool">
+                    <i class="fa fa-eraser"></i>
+                </button>
+            </div>
+
+            <div class="btn-group whiteboard-edit-group">
+                <button style="width: 170px; cursor: default;">
+                    <div
+                        class="activeToolIcon"
+                        style="position: absolute; top: 4px; left: 4px; font-size: 0.6em;"
+                    >
+                        <i class="fa fa-pencil-alt"></i>
+                    </div>
+                    <img
+                        style="
                             position: absolute;
                             left: 11px;
                             top: 10px;
                             height: 14px;
                             width: 130px;
-                        " src="./images/slider-background.svg" />
-                <input title="Strichbreite" id="whiteboardThicknessSlider"
-                    style="position: absolute; left: 9px; width: 130px; top: 10px;" type="range" min="1" max="50"
-                    value="3" />
-                <div id="whiteboardColorpicker" style="
+                        "
+                        src="./images/slider-background.svg"
+                    />
+                    <input
+                        title="Strichbreite"
+                        id="whiteboardThicknessSlider"
+                        style="position: absolute; left: 9px; width: 130px; top: 10px;"
+                        type="range"
+                        min="1"
+                        max="50"
+                        value="3"
+                    />
+                    <div
+                        id="whiteboardColorpicker"
+                        style="
                             position: absolute;
                             left: 145px;
                             top: 8px;
@@ -108,158 +138,225 @@
                             height: 15px;
                             border-radius: 3px;
                             border: 1px solid darkgrey;
-                        " data-color="#000000"></div>
-            </button>
+                        "
+                        data-color="#000000"
+                    ></div>
+                </button>
+            </div>
+
+            <div class="btn-group whiteboard-edit-group">
+                <!-- TODO: Add translation -->
+                <button id="addImgToCanvasBtn" title="Bild hochladen" type="button">
+                    <i class="fas fa-image"></i>
+                    <i
+                        style="position: absolute; top: 4px; left: 4px; font-size: 0.5em;"
+                        class="fas fa-upload"
+                    ></i>
+                </button>
+                <!-- TODO: Add translation -->
+                <button
+                    style="position: relative;"
+                    id="addPdfToCanvasBtn"
+                    title="Upload Pdf to whiteboard"
+                    type="button"
+                >
+                    <i class="far fa-file-pdf"></i>
+                    <i
+                        style="position: absolute; top: 4px; left: 4px; font-size: 0.5em;"
+                        class="fas fa-upload"
+                    ></i>
+                </button>
+                <button
+                    style="position: relative;"
+                    id="uploadJsonBtn"
+                    title="JSON Datei hochladen"
+                    type="button"
+                >
+                    <i class="far fa-file-alt"></i>
+                    <i
+                        style="position: absolute; top: 4px; left: 4px; font-size: 0.5em;"
+                        class="fas fa-upload"
+                    ></i>
+                </button>
+                <input style="display: none;" id="myFile" type="file" />
+            </div>
+            <!-- TODO: Add translation -->
+            <div class="btn-group whiteboard-edit-group">
+                <button id="saveAsImageBtn" title="Whiteboard als Bild speichern" type="button">
+                    <i class="fas fa-image"></i>
+                    <i
+                        style="position: absolute; top: 4px; left: 4px; font-size: 0.5em;"
+                        class="fas fa-save"
+                    ></i>
+                </button>
+                <!-- TODO: Add translation -->
+                <button
+                    style="position: relative;"
+                    id="saveAsPdfBtn"
+                    title="Whiteboard als Pdf speichern"
+                    type="button"
+                >
+                    <i class="far fa-file-pdf"></i>
+                    <i
+                        style="position: absolute; top: 4px; left: 4px; font-size: 0.5em;"
+                        class="fas fa-save"
+                    ></i>
+                </button>
+                <!-- TODO: Add translation -->
+                <button
+                    style="position: relative; display: none;"
+                    id="uploadWebDavBtn"
+                    title="Whiteboard in webdav speichern"
+                    type="button"
+                >
+                    <i class="fas fa-globe"></i>
+                    <i
+                        style="position: absolute; top: 4px; left: 4px; font-size: 0.5em;"
+                        class="fas fa-save"
+                    ></i>
+                </button>
+                <!-- TODO: Add translation -->
+                <button
+                    style="position: relative;"
+                    id="saveAsJSONBtn"
+                    title="Whiteboard als JSON speichern"
+                    type="button"
+                >
+                    <i class="far fa-file-alt"></i>
+                    <i
+                        style="position: absolute; top: 4px; left: 4px; font-size: 0.5em;"
+                        class="fas fa-save"
+                    ></i>
+                </button>
+                <!-- TODO: Add translation -->
+                <button id="shareWhiteboardBtn" title="Whiteboard teilen" type="button">
+                    <i class="fas fa-share-square"></i>
+                </button>
+                <!-- TODO: Add translation -->
+                <button
+                    id="displayWhiteboardInfoBtn"
+                    title="Whiteboard Info anzeigen"
+                    type="button"
+                >
+                    <i class="fas fa-info-circle"></i>
+                </button>
+            </div>
+            <!-- TODO: Add translation -->
+            <div class="btn-group minGroup">
+                <button id="minMaxBtn" title="Menü ein-/ausblenden" type="button">
+                    <i
+                        id="minBtn"
+                        style="position: relative; display: none;"
+                        class="fas fa-angle-left"
+                    ></i>
+                    <i id="maxBtn" style="position: relative;" class="fas fa-angle-right"></i>
+                </button>
+            </div>
         </div>
 
-        <div class="btn-group whiteboard-edit-group">
-            <!-- TODO: Add translation -->
-            <button id="addImgToCanvasBtn" title="Bild hochladen" type="button">
-                <i class="fas fa-image"></i>
-                <i style="position: absolute; top: 4px; left: 4px; font-size: 0.5em;" class="fas fa-upload"></i>
-            </button>
-            <!-- TODO: Add translation -->
-            <button style="position: relative;" id="addPdfToCanvasBtn" title="Upload Pdf to whiteboard" type="button">
-                <i class="far fa-file-pdf"></i>
-                <i style="position: absolute; top: 4px; left: 4px; font-size: 0.5em;" class="fas fa-upload"></i>
-            </button>
-            <button style="position: relative;" id="uploadJsonBtn" title="JSON Datei hochladen" type="button">
-                <i class="far fa-file-alt"></i>
-                <i style="position: absolute; top: 4px; left: 4px; font-size: 0.5em;" class="fas fa-upload"></i>
-            </button>
-            <input style="display: none;" id="myFile" type="file" />
-        </div>
-        <!-- TODO: Add translation -->
-        <div class="btn-group whiteboard-edit-group">
-            <button id="saveAsImageBtn" title="Whiteboard als Bild speichern" type="button">
-                <i class="fas fa-image"></i>
-                <i style="position: absolute; top: 4px; left: 4px; font-size: 0.5em;" class="fas fa-save"></i>
-            </button>
-            <!-- TODO: Add translation -->
-            <button style="position: relative; display: none;" id="uploadWebDavBtn"
-                title="Whiteboard in webdav speichern" type="button">
-                <i class="fas fa-globe"></i>
-                <i style="position: absolute; top: 4px; left: 4px; font-size: 0.5em;" class="fas fa-save"></i>
-            </button>
-            <!-- TODO: Add translation -->
-            <button style="position: relative;" id="saveAsJSONBtn" title="Whiteboard als JSON speichern" type="button">
-                <i class="far fa-file-alt"></i>
-                <i style="position: absolute; top: 4px; left: 4px; font-size: 0.5em;" class="fas fa-save"></i>
-            </button>
-            <!-- TODO: Add translation -->
-            <button id="shareWhiteboardBtn" title="Whiteboard teilen" type="button" class="displayNone">
-                <i class="fas fa-share-square"></i>
-            </button>
-            <!-- TODO: Add translation -->
-            <button id="displayWhiteboardInfoBtn" title="Whiteboard Info anzeigen" type="button">
-                <i class="fas fa-info-circle"></i>
-            </button>
-        </div>
-        <!-- TODO: Add translation -->
-        <div class="btn-group minGroup">
-            <button id="minMaxBtn" title="Menü ein-/ausblenden" type="button">
-                <i id="minBtn" style="position: relative; display: none;" class="fas fa-angle-left"></i>
-                <i id="maxBtn" style="position: relative;" class="fas fa-angle-right"></i>
-            </button>
-        </div>
-    </div>
-
-    <div id="presentationContainer" class="displayNone">
-        <div class="dragMe" style="
+        <div id="presentationContainer" class="displayNone">
+            <div
+                class="dragMe"
+                style="
                     border: 2px dashed gray;
                     position: absolute;
                     left: 15px;
                     top: 70px;
                     cursor: move;
-                ">
-            <img style="max-width: 100%; height: 100%;" />
-            <div style="position: absolute; right: 5px; top: 3px;">
-                <button style="
-                            margin: 3px 0 0 0;
-                            background: #03a9f4;
-                            padding: 5px;
-                            color: white;
-                        " class="previousButton btn btn-default">
-                    <i class="fa fa-caret-left"></i>
-                </button>
-                <button style="
-                            margin: 3px 0 0 0;
-                            background: #03a9f4;
-                            padding: 5px;
-                            color: white;
-                        " class="nextButton btn btn-default">
-                    <i class="fa fa-caret-right"></i>
-                </button>
-                <button style="
-                            margin: 3px 0 0 0;
-                            background: #03a9f4;
-                            padding: 5px;
-                            color: white;
-                        " class="fullscreenButton btn btn-default">
-                    <i class="fa fa-expand"></i>
-                </button>
-                <button style="
-                            margin: 3px 0 0 0;
-                            background: #03a9f4;
-                            padding: 5px;
-                            color: white;
-                        " class="xCanvasBtn btn btn-default">
-                    <i class="fa fa-times"></i>
-                </button>
-            </div>
-            <i style="
+                "
+            >
+                <img style="max-width: 100%; height: 100%;" />
+                <div style="position: absolute; right: 5px; top: 3px;">
+                    <button
+                        style="margin: 3px 0 0 0; background: #03a9f4; padding: 5px; color: white;"
+                        class="previousButton btn btn-default"
+                    >
+                        <i class="fa fa-caret-left"></i>
+                    </button>
+                    <button
+                        style="margin: 3px 0 0 0; background: #03a9f4; padding: 5px; color: white;"
+                        class="nextButton btn btn-default"
+                    >
+                        <i class="fa fa-caret-right"></i>
+                    </button>
+                    <button
+                        style="margin: 3px 0 0 0; background: #03a9f4; padding: 5px; color: white;"
+                        class="fullscreenButton btn btn-default"
+                    >
+                        <i class="fa fa-expand"></i>
+                    </button>
+                    <button
+                        style="margin: 3px 0 0 0; background: #03a9f4; padding: 5px; color: white;"
+                        class="xCanvasBtn btn btn-default"
+                    >
+                        <i class="fa fa-times"></i>
+                    </button>
+                </div>
+                <i
+                    style="
                         position: absolute;
                         bottom: -4px;
                         right: 2px;
                         font-size: 2em;
                         color: gray;
                         transform: rotate(-45deg);
-                    " class="fas fa-sort-down" aria-hidden="true"></i>
-            <div class="rotationHandle" style="
+                    "
+                    class="fas fa-sort-down"
+                    aria-hidden="true"
+                ></i>
+                <div
+                    class="rotationHandle"
+                    style="
                         position: absolute;
                         bottom: -30px;
                         left: 0;
                         width: 100%;
                         text-align: center;
                         cursor: ew-resize;
-                    ">
-                <i class="fa fa-undo"></i>
+                    "
+                >
+                    <i class="fa fa-undo"></i>
+                </div>
             </div>
         </div>
-    </div>
 
-    <div id="whiteboardInfoContainer" class="displayNone">
-        <!-- TODO: Add translation -->
-        <p><b>Whiteboard Information:</b></p>
-        <p># verbundene Benutzer: <i id="connectedUsersCount">0</i></p>
-        <p>Kleinste Bildschirmauflösung: <i id="smallestScreenResolution">Unbekannt.</i></p>
-        <p># Nachrichten zum Server geschickt: <i id="messageSentCount">0</i></p>
-        <p># Nachrichten vom Server erhalten: <i id="messageReceivedCount">0</i></p>
-        <p># Schreibgeschützt: <i id="isReadOnly">false</i></p>
-    </div>
+        <div id="whiteboardInfoContainer" class="displayNone">
+            <!-- TODO: Add translation -->
+            <p><b>Whiteboard Information:</b></p>
+            <p># verbundene Benutzer: <i id="connectedUsersCount">0</i></p>
+            <p>Kleinste Bildschirmauflösung: <i id="smallestScreenResolution">Unbekannt.</i></p>
+            <p># Nachrichten zum Server geschickt: <i id="messageSentCount">0</i></p>
+            <p># Nachrichten vom Server erhalten: <i id="messageReceivedCount">0</i></p>
+            <p># Schreibgeschützt: <i id="isReadOnly">false</i></p>
+        </div>
 
-    <div id="shareWhiteboardDialog" class="displayNone">
-        <div class="shareWhiteboardDialogContent">
-            <!--  <button
+        <div id="shareWhiteboardDialog" class="displayNone">
+            <div class="shareWhiteboardDialogContent">
+                <!--  <button
                     class="shareWhiteboardDialogItem"
                     id="shareWhiteboardDialogCopyReadOnlyLink"
                 >
                     <i class="fa fa-lock"></i>&nbsp;Share read-only link
                 </button> -->
-            <button class="shareWhiteboardDialogItem displayNone" id="shareWhiteboardDialogCopyReadWriteLink">
-                <!-- TODO: Add translation -->
-                <i class="fa fa-share-square"></i>&nbsp;Link teilen
-            </button>
-            <button class="shareWhiteboardDialogItem" id="shareWhiteboardDialogGoBack">
-                <!-- TODO: Add translation -->
-                <b>Zurück zum Whiteboard</b>
-            </button>
-            <p class="shareWhiteboardDialogItem displayNone" id="shareWhiteboardDialogMessage"></p>
+                <button
+                    class="shareWhiteboardDialogItem displayNone"
+                    id="shareWhiteboardDialogCopyReadWriteLink"
+                >
+                    <!-- TODO: Add translation -->
+                    <i class="fa fa-share-square"></i>&nbsp;Link teilen
+                </button>
+                <button class="shareWhiteboardDialogItem" id="shareWhiteboardDialogGoBack">
+                    <!-- TODO: Add translation -->
+                    <b>Zurück zum Whiteboard</b>
+                </button>
+                <p
+                    class="shareWhiteboardDialogItem displayNone"
+                    id="shareWhiteboardDialogMessage"
+                ></p>
+            </div>
         </div>
-    </div>
-    <div id="pageLoader">
-        <div />
-    </div>
-</body>
-
+        <div id="pageLoader">
+            <div />
+        </div>
+    </body>
 </html>

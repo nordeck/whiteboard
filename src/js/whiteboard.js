@@ -276,7 +276,7 @@ const whiteboard = {
                 if (_this.pressedKeys.shift) {
                     if (
                         (currentPos.x - _this.startCoords.x) *
-                        (currentPos.y - _this.startCoords.y) >
+                            (currentPos.y - _this.startCoords.y) >
                         0
                     ) {
                         currentPos = new Point(
@@ -326,7 +326,7 @@ const whiteboard = {
                 if (_this.pressedKeys.shift) {
                     if (
                         (currentPos.x - _this.startCoords.x) *
-                        (currentPos.y - _this.startCoords.y) >
+                            (currentPos.y - _this.startCoords.y) >
                         0
                     ) {
                         currentPos = new Point(
@@ -562,12 +562,12 @@ const whiteboard = {
             if (_this.tool === "eraser" || _this.tool === "pen") {
                 _this.ownCursor = $(
                     '<div id="ownCursor" style="background:' +
-                    color +
-                    "; border:2px solid gray; position:absolute; width:" +
-                    widthHeight +
-                    "px; height:" +
-                    widthHeight +
-                    'px; border-radius:50%;"></div>'
+                        color +
+                        "; border:2px solid gray; position:absolute; width:" +
+                        widthHeight +
+                        "px; height:" +
+                        widthHeight +
+                        'px; border-radius:50%;"></div>'
                 );
                 _this.cursorContainer.append(_this.ownCursor);
             }
@@ -763,17 +763,17 @@ const whiteboard = {
         _this.mouseOverlay.css({ cursor: "default" });
         var imgDiv = $(
             '<div class="dragMe" style="border: 2px dashed gray; position:absolute; left:200px; top:200px; min-width:160px; min-height:100px; cursor:move;">' +
-            '<img style="width:100%; height:100%;" src="' +
-            url +
-            '">' +
-            '<div style="position:absolute; right:5px; top:3px;">' +
-            '<button draw="1" style="margin: 0px 0px; background: #03a9f4; padding: 5px; margin-top: 3px; color: white;" class="addToCanvasBtn btn btn-default">Draw to canvas</button> ' +
-            '<button draw="0" style="margin: 0px 0px; background: #03a9f4; padding: 5px; margin-top: 3px; color: white;" class="addToBackgroundBtn btn btn-default">Add to background</button> ' +
-            '<button style="margin: 0px 0px; background: #03a9f4; padding: 5px; margin-top: 3px; color: white;" class="xCanvasBtn btn btn-default">x</button>' +
-            "</div>" +
-            '<i style="position:absolute; bottom: -4px; right: 2px; font-size: 2em; color: gray; transform: rotate(-45deg);" class="fas fa-sort-down" aria-hidden="true"></i>' +
-            '<div class="rotationHandle" style="position:absolute; bottom: -30px; left: 0px; width:100%; text-align:center; cursor:ew-resize;"><i class="fa fa-undo"></i></div>' +
-            "</div>"
+                '<img style="width:100%; height:100%;" src="' +
+                url +
+                '">' +
+                '<div style="position:absolute; right:5px; top:3px;">' +
+                '<button draw="1" style="margin: 0px 0px; background: #03a9f4; padding: 5px; margin-top: 3px; color: white;" class="addToCanvasBtn btn btn-default">Draw to canvas</button> ' +
+                '<button draw="0" style="margin: 0px 0px; background: #03a9f4; padding: 5px; margin-top: 3px; color: white;" class="addToBackgroundBtn btn btn-default">Add to background</button> ' +
+                '<button style="margin: 0px 0px; background: #03a9f4; padding: 5px; margin-top: 3px; color: white;" class="xCanvasBtn btn btn-default">x</button>' +
+                "</div>" +
+                '<i style="position:absolute; bottom: -4px; right: 2px; font-size: 2em; color: gray; transform: rotate(-45deg);" class="fas fa-sort-down" aria-hidden="true"></i>' +
+                '<div class="rotationHandle" style="position:absolute; bottom: -30px; left: 0px; width:100%; text-align:center; cursor:ew-resize;"><i class="fa fa-undo"></i></div>' +
+                "</div>"
         );
         imgDiv
             .find(".xCanvasBtn")
@@ -841,7 +841,7 @@ const whiteboard = {
         imgDiv.resizable();
         var params = {
             // Callback fired on rotation start.
-            start: function (event, ui) { },
+            start: function (event, ui) {},
             // Callback fired during rotation.
             rotate: function (event, ui) {
                 //console.log(ui)
@@ -860,38 +860,38 @@ const whiteboard = {
     drawImgToBackground(url, width, height, left, top, rotationAngle) {
         this.imgContainer.append(
             '<img crossorigin="anonymous" style="width:' +
-            width +
-            "px; height:" +
-            height +
-            "px; position:absolute; top:" +
-            top +
-            "px; left:" +
-            left +
-            "px; transform: rotate(" +
-            rotationAngle +
-            'rad);" src="' +
-            url +
-            '">'
+                width +
+                "px; height:" +
+                height +
+                "px; position:absolute; top:" +
+                top +
+                "px; left:" +
+                left +
+                "px; transform: rotate(" +
+                rotationAngle +
+                'rad);" src="' +
+                url +
+                '">'
         );
     },
     addTextBox(textcolor, fontsize, left, top, txId, newLocalBox) {
         var _this = this;
         var textBox = $(
             '<div id="' +
-            txId +
-            '" class="textBox" style="font-family: Monospace; position:absolute; top:' +
-            top +
-            "px; left:" +
-            left +
-            'px;">' +
-            '<div contentEditable="true" spellcheck="false" class="textContent" style="outline: none; font-size:' +
-            fontsize +
-            "em; color:" +
-            textcolor +
-            '; min-width:50px; min-height:50px;"></div>' +
-            '<div title="remove textbox" class="removeIcon" style="position:absolute; cursor:pointer; top:-4px; right:2px;">x</div>' +
-            '<div title="move textbox" class="moveIcon" style="position:absolute; cursor:move; top:1px; left:2px; font-size: 0.5em;"><i class="fas fa-expand-arrows-alt"></i></div>' +
-            "</div>"
+                txId +
+                '" class="textBox" style="font-family: Monospace; position:absolute; top:' +
+                top +
+                "px; left:" +
+                left +
+                'px;">' +
+                '<div contentEditable="true" spellcheck="false" class="textContent" style="outline: none; font-size:' +
+                fontsize +
+                "em; color:" +
+                textcolor +
+                '; min-width:50px; min-height:50px;"></div>' +
+                '<div title="remove textbox" class="removeIcon" style="position:absolute; cursor:pointer; top:-4px; right:2px;">x</div>' +
+                '<div title="move textbox" class="moveIcon" style="position:absolute; cursor:move; top:1px; left:2px; font-size: 0.5em;"><i class="fas fa-expand-arrows-alt"></i></div>' +
+                "</div>"
         );
         _this.latestActiveTextBoxId = txId;
         textBox.click(function (e) {
@@ -1110,15 +1110,15 @@ const whiteboard = {
                 if (width < $(window).width() || height < $(window).height()) {
                     this.backgroundGrid.append(
                         '<div style="position:absolute; left:0px; top:0px; border-right:3px dotted black; border-bottom:3px dotted black; width:' +
-                        width +
-                        "px; height:" +
-                        height +
-                        'px;"></div>'
+                            width +
+                            "px; height:" +
+                            height +
+                            'px;"></div>'
                     );
                     this.backgroundGrid.append(
                         '<div style="position:absolute; left:' +
-                        (width + 5) +
-                        'px; top:0px;">Kleinste Bildschirmauflösung</div>'
+                            (width + 5) +
+                            'px; top:0px;">Kleinste Bildschirmauflösung</div>'
                     ); /* TODO: translate */
                 }
             }
@@ -1198,15 +1198,15 @@ const whiteboard = {
                     } else {
                         _this.cursorContainer.append(
                             '<div style="font-size:0.8em; padding-left:2px; padding-right:2px; background:gray; color:white; border-radius:3px; position:absolute; left:' +
-                            data[0] +
-                            "px; top:" +
-                            (data[1] - 151) +
-                            'px;" class="userbadge ' +
-                            content["username"] +
-                            '">' +
-                            '<div style="width:4px; height:4px; background:gray; position:absolute; top:13px; left:-2px; border-radius:50%;"></div>' +
-                            decodeURIComponent(atob(content["username"])) +
-                            "</div>"
+                                data[0] +
+                                "px; top:" +
+                                (data[1] - 151) +
+                                'px;" class="userbadge ' +
+                                content["username"] +
+                                '">' +
+                                '<div style="width:4px; height:4px; background:gray; position:absolute; top:13px; left:-2px; border-radius:50%;"></div>' +
+                                decodeURIComponent(atob(content["username"])) +
+                                "</div>"
                         );
                     }
                 } else {
@@ -1323,6 +1323,12 @@ const whiteboard = {
             }
             checkForReturn();
         };
+    },
+    getPdfData() {
+        return html2canvas($("#whiteboardContainer").get(0), {
+            backgroundColor: "rgba(0, 0, 0, 0)",
+            removeContainer: true,
+        });
     },
     getImageDataJson() {
         var sendObj = [];
