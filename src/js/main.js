@@ -158,6 +158,7 @@ function showBasicAlert(html, newOptions) {
 
 function initWhiteboard() {
     $(document).ready(function () {
+        ReadOnlyService.disableToolbar();
         // by default set in readOnly mode
         ReadOnlyService.activateReadOnlyMode();
 

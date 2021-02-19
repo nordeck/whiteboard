@@ -27,15 +27,12 @@ class ReadOnlyService {
     /**
      * Activate read-only mode
      */
-    activateReadOnlyMode() {
-        if (ConfigService.isAdmin) {
-            $("#whiteboardUnlockBtn").hide();
-            $("#whiteboardLockBtn").show();
-            return;
-        }
+    disableToolbar() {
         this.#readOnlyActive = true;
         $("#whiteboardUnlockBtn").hide();
         $("#whiteboardLockBtn").hide();
+        $(".whiteboard-tool[tool=pen]").removeClass("active");
+        $(".whiteboard-tool[tool=mouse]").addClass("active");
         this.#previousToolHtmlElem = $(".whiteboard-tool.active");
 
         // switch to mouse tool to prevent the use of the
@@ -44,6 +41,15 @@ class ReadOnlyService {
         $(".whiteboard-tool").prop("disabled", true);
         $(".whiteboard-edit-group > button").prop("disabled", true);
         $(".whiteboard-edit-group").addClass("group-disabled");
+    }
+
+    activateReadOnlyMode() {
+        if (ConfigService.isAdmin) {
+            $("#whiteboardUnlockBtn").hide();
+            $("#whiteboardLockBtn").show();
+            return;
+        }
+        this.disableToolbar();
     }
 
     /**
