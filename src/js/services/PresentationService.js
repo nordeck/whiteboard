@@ -7,6 +7,7 @@ import ConfigService from "./ConfigService";
 class PresentationService {
     #isInitialized = false;
     #signaling_socket = null;
+    #areBtnsInititialized = false;
 
     /**
      * @type {boolean}
@@ -128,7 +129,7 @@ class PresentationService {
             previousButton.hide();
             nextButton.hide();
         }
-        if (this.#isInitialized) return;
+        if (this.#isInitialized && this.#areBtnsInititialized) return;
         const _this = this;
         if (ConfigService.isAdmin) {
             nextButton.off("click").click(function () {
@@ -149,6 +150,7 @@ class PresentationService {
                     $(this).prop("disabled", true);
                 }
             });
+            this.#areBtnsInititialized = true;
         }
         closeButton.off("click").click(() => {
             if (imgDiv.hasClass("fullscreen")) {
