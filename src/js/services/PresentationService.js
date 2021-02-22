@@ -150,6 +150,8 @@ class PresentationService {
                     $(this).prop("disabled", true);
                 }
             });
+        }
+        if (ConfigService.isAdmin !== undefined) {
             this.#areBtnsInititialized = true;
         }
         closeButton.off("click").click(() => {
