@@ -83,9 +83,19 @@ function startBackendServer(port) {
         const wid = req["query"]["wid"];
         const at = req["query"]["at"];
         if (at === adminApiAccessToken) {
-            s_whiteboard.handleEventsAndData({ wid: wid, t: "clear" });
-            clearPresentation(wid);
+            try {
+                s_whiteboard.handleEventsAndData({ wid: wid, t: "clear" });
+                clearPresentation(wid);
+                res.send("successfully cleared whiteboard " + wid);
+            } catch(err) {
+                console.error("failed to clear whiteboard " + wid, err);
+                res.send("failed to clear whiteboard " + wid);
+                res.status(500); //failed               
+            }
+            res.end(); 
         } else {
+            console.error("not allowed to clear whiteboard " + wid);
+            res.send("not allowed to clear whiteboard " + wid);
             res.status(401); //Unauthorized
             res.end();
         }
