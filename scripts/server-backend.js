@@ -87,12 +87,12 @@ function startBackendServer(port) {
                 s_whiteboard.handleEventsAndData({ wid: wid, t: "clear" });
                 clearPresentation(wid);
                 res.send("successfully cleared whiteboard " + wid);
-            } catch(err) {
+            } catch (err) {
                 console.error("failed to clear whiteboard " + wid, err);
                 res.send("failed to clear whiteboard " + wid);
-                res.status(500); //failed               
+                res.status(500); //failed
             }
-            res.end(); 
+            res.end();
         } else {
             console.error("not allowed to clear whiteboard " + wid);
             res.send("not allowed to clear whiteboard " + wid);
@@ -176,17 +176,17 @@ function startBackendServer(port) {
                 console.log("Could not create upload folder!", err);
                 return;
             }
-            let data = fields["imagedata"] || fields["data"];
-            if (data && data != "") {
-                //Save from base64 data
-                data = data.replace(/^data:.*?;base64,/, "");
-                console.log(filename, "uploaded");
+            let data = Object.values(formData["files"]);
+            if (data && data.length) {
+                const file = data[0];
                 const savingPath = path.join(savingDir, filename);
-                fs.writeFile(savingPath, data, "base64", function (err) {
+                const oldpath = file.path;
+                fs.copyFile(oldpath, savingPath, function (err) {
                     if (err) {
                         console.log("error", err);
                         callback(err);
                     } else {
+                        console.log(filename, "uploaded");
                         if (webdavaccess) {
                             //Save image to webdav
                             if (enableWebdav) {

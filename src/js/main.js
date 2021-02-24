@@ -13,7 +13,7 @@ import ReadOnlyService from "./services/ReadOnlyService";
 import { checkUserRole } from "./services/VerificationService";
 import WidgetProviderService from "./services/WidgetProviderService";
 import shortcutFunctions from "./shortcutFunctions";
-import { blobToDataURL, getSubDir, isImageFileName, isPDFFileName } from "./utils";
+import { getSubDir, isImageFileName, isPDFFileName } from "./utils";
 import whiteboard from "./whiteboard";
 
 const urlParams = new URLSearchParams(window.location.search);
@@ -722,9 +722,7 @@ function initWhiteboard() {
                     var filename = e.originalEvent.dataTransfer.files[0]["name"];
                     if (isImageFileName(filename)) {
                         var blob = e.originalEvent.dataTransfer.files[0];
-                        blobToDataURL(blob).then((base64data) => {
-                            uploadImgAndAddToWhiteboard(base64data);
-                        });
+                        uploadImgAndAddToWhiteboard(blob);
                     } else if (isPDFFileName(filename)) {
                         //Handle PDF Files
                         var blob = e.originalEvent.dataTransfer.files[0];
@@ -736,7 +734,7 @@ function initWhiteboard() {
                             var loadingTask = pdfjsLib.getDocument({ data: pdfData });
                             loadingTask.promise.then(
                                 function (pdf) {
-                                    var currentDataUrl = null;
+                                    var currentDataBlob = null;
                                     var pageNumber = 1;
                                     var modalDiv = $(
                                         "<div>" +
@@ -774,14 +772,9 @@ function initWhiteboard() {
                                         .find("#startPresentation")
                                         .off("click")
                                         .click(function () {
-                                            if (currentDataUrl) {
+                                            if (blob) {
                                                 $(".basicalert").remove();
-                                                blobToDataURL(blob).then((base64data) => {
-                                                    uploadPdfAndStartPresentation(
-                                                        base64data,
-                                                        pageNumber
-                                                    );
-                                                });
+                                                uploadPdfAndStartPresentation(blob, pageNumber);
                                             }
                                         });
 
@@ -789,9 +782,9 @@ function initWhiteboard() {
                                         .find("#uploadToWhiteboard")
                                         .off("click")
                                         .click(function () {
-                                            if (currentDataUrl) {
+                                            if (currentDataBlob) {
                                                 $(".basicalert").remove();
-                                                uploadImgAndAddToWhiteboard(currentDataUrl);
+                                                uploadImgAndAddToWhiteboard(currentDataBlob);
                                             }
                                         });
 
@@ -830,11 +823,12 @@ function initWhiteboard() {
                                             };
                                             var renderTask = page.render(renderContext);
                                             renderTask.promise.then(function () {
-                                                var dataUrl = canvas.toDataURL(
-                                                    "application/pdf",
+                                                canvas.toBlob(
+                                                    (blob) => (currentDataBlob = blob),
+                                                    "image/png",
                                                     1.0
                                                 );
-                                                currentDataUrl = dataUrl;
+                                                var dataUrl = canvas.toDataURL("image/png", 1.0);
                                                 modalDiv.find("img").attr("src", dataUrl);
                                             });
                                         });
@@ -876,7 +870,13 @@ function initWhiteboard() {
                                     if (isImageFileName(url) || url.startsWith("http")) {
                                         whiteboard.addImgToCanvasByUrl(url);
                                     } else {
-                                        uploadImgAndAddToWhiteboard(url); //Last option maybe its base64
+                                        fetch(url)
+                                            .then((res) => res.blob())
+                                            .then((blob) => uploadImgAndAddToWhiteboard(blob))
+                                            .catch((err) =>
+                                                console.error("Failed to upload.", err)
+                                            );
+                                        //Last option maybe its a data url
                                     }
                                 } else {
                                     showBasicAlert("Es können nur Bilddateien hochgeladen werden!");
@@ -948,17 +948,19 @@ function initWhiteboard() {
         false
     );
 
-    function uploadImgAndAddToWhiteboard(base64data) {
+    function uploadImgAndAddToWhiteboard(data) {
         const date = +new Date();
+        var formData = new FormData();
+        formData.append("whiteboardId", whiteboardId);
+        formData.append("date", date);
+        formData.append("at", accessToken);
+        formData.append("imagedata", data);
         $.ajax({
             type: "POST",
             url: document.URL.substr(0, document.URL.lastIndexOf("/")) + "/api/upload",
-            data: {
-                imagedata: base64data,
-                whiteboardId: whiteboardId,
-                date: date,
-                at: accessToken,
-            },
+            data: formData,
+            processData: false,
+            contentType: false,
             success: function (msg) {
                 const { correspondingReadOnlyWid } = ConfigService;
                 const filename = `${correspondingReadOnlyWid}_${date}.png`;
@@ -973,20 +975,22 @@ function initWhiteboard() {
         });
     }
 
-    function uploadPdfAndStartPresentation(base64data, pageNumber) {
+    function uploadPdfAndStartPresentation(data, pageNumber) {
         const date = +new Date();
         const { correspondingReadOnlyWid } = ConfigService;
         const filename = `${correspondingReadOnlyWid}_${date}.pdf`;
+        var formData = new FormData();
+        formData.append("whiteboardId", whiteboardId);
+        formData.append("date", date);
+        formData.append("at", accessToken);
+        formData.append("data", data);
+        formData.append("name", filename);
         $.ajax({
             type: "POST",
             url: document.URL.substr(0, document.URL.lastIndexOf("/")) + "/api/upload",
-            data: {
-                data: base64data,
-                whiteboardId: whiteboardId,
-                date: date,
-                at: accessToken,
-                name: filename,
-            },
+            data: formData,
+            processData: false,
+            contentType: false,
             success: function (msg) {
                 const rootUrl = document.URL.substr(0, document.URL.lastIndexOf("/"));
                 signaling_socket.emit("setPresentation", {
@@ -1000,18 +1004,20 @@ function initWhiteboard() {
         });
     }
 
-    function saveWhiteboardToWebdav(base64data, webdavaccess, callback) {
+    function saveWhiteboardToWebdav(data, webdavaccess, callback) {
         var date = +new Date();
+        var formData = new FormData();
+        formData.append("whiteboardId", whiteboardId);
+        formData.append("date", date);
+        formData.append("at", accessToken);
+        formData.append("imagedata", data);
+        formData.append("webdavaccess", JSON.stringify(webdavaccess));
         $.ajax({
             type: "POST",
             url: document.URL.substr(0, document.URL.lastIndexOf("/")) + "api/upload",
-            data: {
-                imagedata: base64data,
-                whiteboardId: whiteboardId,
-                date: date,
-                at: accessToken,
-                webdavaccess: JSON.stringify(webdavaccess),
-            },
+            data: formData,
+            processData: false,
+            contentType: false,
             success: function (msg) {
                 showBasicAlert("Das Whiteboard wurde in Webdav gespeichert!", {
                     headercolor: "#5c9e5c",
@@ -1067,11 +1073,7 @@ function initWhiteboard() {
                         var blob = items[i].getAsFile();
 
                         var reader = new window.FileReader();
-                        reader.readAsDataURL(blob);
-                        reader.onloadend = function () {
-                            let base64data = reader.result;
-                            uploadImgAndAddToWhiteboard(base64data);
-                        };
+                        uploadImgAndAddToWhiteboard(blob);
                     }
                 }
             }

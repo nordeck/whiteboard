@@ -156,9 +156,7 @@ class PresentationService {
         }
         closeButton.off("click").click(() => {
             if (imgDiv.hasClass("fullscreen")) {
-                _this.exitFullscreen().then(() => {
-                    imgDiv.toggleClass("fullscreen", false);
-                });
+                _this.exitFullscreen();
             } else {
                 _this.hidePresentation();
                 if (_this.#presentation) {
@@ -219,6 +217,10 @@ class PresentationService {
     }
 
     enterFullscreen(element) {
+        document.addEventListener("fullscreenchange", this.onFullScreenChange, false);
+        document.addEventListener("webkitfullscreenchange", this.onFullScreenChange, false);
+        document.addEventListener("mozfullscreenchange", this.onFullScreenChange, false);
+
         if (element.requestFullscreen) {
             return element.requestFullscreen();
         } else if (element.msRequestFullscreen) {
@@ -233,6 +235,20 @@ class PresentationService {
             return document.exitFullscreen();
         } else if (document.webkitExitFullscreen) {
             return document.webkitExitFullscreen();
+        }
+    }
+
+    onFullScreenChange() {
+        var fullscreenElement =
+            document.fullscreenElement ||
+            document.mozFullScreenElement ||
+            document.webkitFullscreenElement;
+        console.log("fullscreen changed");
+        if (!fullscreenElement) {
+            $("#presentationContainer .dragMe").toggleClass("fullscreen", false);
+            document.removeEventListener("fullscreenchange", this.onFullScreenChange, false);
+            document.removeEventListener("webkitfullscreenchange", this.onFullScreenChange, false);
+            document.removeEventListener("mozfullscreenchange", this.onFullScreenChange, false);
         }
     }
 }
