@@ -12,6 +12,7 @@ class WidgetProviderService {
         const parentOrigin = parentUrl && new URL(parentUrl).origin;
         const widgetId = qsParam("widgetId");
         this.widgetApi = new WidgetApi(widgetId, parentOrigin);
+        this.widgetApi.requestCapability('io.element.requires_client');
 
         const mainWidgetId = widgetId && decodeURIComponent(widgetId).replace(/^modal_/, "");
         this.isInitializing = true;
